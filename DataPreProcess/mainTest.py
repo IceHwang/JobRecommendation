@@ -12,7 +12,6 @@ def main():
     mylist=KeywordMapper.KeyWordMapper.transformJsonList(jsonList)
     file.saveJsonList("test.json",mylist)
     print(mylist)
-    print('test')
 
 
 if __name__ == '__main__':
