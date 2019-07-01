@@ -1,4 +1,3 @@
-import json
 class FileIO():
     def __init__(self,dpath):
         self.dpath = dpath
@@ -44,8 +43,11 @@ class FileIO():
 
         return SimiliarWord
     def saveJsonList(self,filename, JsonList):
-        with open(self.dpath+filename, 'w', encoding='utf-8') as f:
+        with open(self.dpath+filename, 'a', encoding='utf-8') as f:
             for i in JsonList:
-                f.write(json.dumps(i, ensure_ascii=False)+'\n')
+                f.write(i['name']+' ')
+                for j in i['skill']:
+                    f.write(j+' ')
+                f.write('\n')
 
 
