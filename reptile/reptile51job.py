@@ -1,10 +1,12 @@
 import re
 import requests
-from lxml import etree
+from lxml import html
 import time
 import random
 import json
+from bs4 import BeautifulSoup
 
+etree = html.etree
 k = ['Hadoop', 'Python', 'Delphi',
          'VB', 'Perl', 'Ruby', 'Node.js', 'Go', 'ASP', 'Shell', '区块链', '后端开发', 'HTML5', 'Android', 'iOS',
          'WP', '移动开发', '前端开发', 'web前端', 'Flash', 'html5', 'JavaScript', 'U3D', 'COCOS2D-X', '前端开发', '深度学习',
@@ -30,6 +32,8 @@ def parseInfo(url,key):
 
     selector = etree.HTML(res.text)
 
+    soup = BeautifulSoup(res.text,'lxml')
+
     title = selector.xpath('//*[@id="pageContent"]/div[1]/div[1]/p/text()')
     salary = selector.xpath('//*[@id="pageContent"]/div[1]/p/text()')
     company = selector.xpath('//*[@id="pageContent"]/div[2]/a[1]/p/text()')
@@ -40,8 +44,9 @@ def parseInfo(url,key):
     edu = selector.xpath('//*[@id="pageContent"]/div[1]/div[2]/span[3]/text()')
     num = selector.xpath('//*[@id="pageContent"]/div[1]/div[2]/span[1]/text()')
     time = selector.xpath('//*[@id="pageContent"]/div[1]/div[1]/span/text()')
-    info = selector.xpath('string(//*[@id="pageContent"]/div[3]/div[2]/article)')
-    info = str(info).strip()
+    info = soup.find('div', class_='ain')
+    if info != None:
+        info = info.text
     position = {
         'name': title,
         'city':companyplace,
@@ -52,7 +57,7 @@ def parseInfo(url,key):
     }
     with open(key+'_data.json','a',encoding='utf-8') as f:
         f.write(json.dumps(position,ensure_ascii=False)+'\n')
-    print(position)
+    #print(position)
 
 
 def getUrl(url,key):
@@ -67,7 +72,7 @@ def getUrl(url,key):
         print(urls)
         for url in urls:
             parseInfo(url,key)
-            time.sleep(random.randrange(1, 4))
+            time.sleep(0.5)
 
 
 if __name__ == '__main__':
