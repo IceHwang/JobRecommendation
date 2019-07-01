@@ -17,8 +17,9 @@ class FileIO():
     def getStopWordList(self, filename):
         stopWord = []
         with open(self.dpath+filename, 'r', encoding='utf-8') as f:
-            for lines in f.readlines():
-                stopWord.append(lines)
+            for line in f.readlines():
+                line=line.replace("\n","")
+                stopWord.append(line)
 
         return stopWord
 
@@ -43,7 +44,7 @@ class FileIO():
 
         return SimiliarWord
     def saveJsonList(self,filename, JsonList):
-        with open(self.dpath+filename, 'a', encoding='utf-8') as f:
+        with open(self.dpath+filename, 'w', encoding='utf-8') as f:
             for i in JsonList:
                 f.write(i['name']+' ')
                 for j in i['skill']:
