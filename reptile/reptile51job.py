@@ -1,13 +1,14 @@
 import re
 import requests
-from lxml import etree
+from lxml import html
 import time
 import random
 import json
+from bs4 import BeautifulSoup
 
-k = ['Hadoop', 'Python', 'Delphi',
-         'VB', 'Perl', 'Ruby', 'Node.js', 'Go', 'ASP', 'Shell', '区块链', '后端开发', 'HTML5', 'Android', 'iOS',
-         'WP', '移动开发', '前端开发', 'web前端', 'Flash', 'html5', 'JavaScript', 'U3D', 'COCOS2D-X', '前端开发', '深度学习',
+etree = html.etree
+k = ['HTML5', 'Android', 'iOS',
+         'WP', '移动开发', '前端开发', 'web前端', 'Flash', 'html5', 'JavaScript', 'U3D', 'COCOS2D-X', '深度学习',
          '机器学习', '图像处理', '图像识别', '语音识别', '机器视觉', '算法工程师', '自然语言处理', '测试', '测试工程师', '自动化测试', '功能测试', '性能测试', '测试开发',
          '游戏测试', '白盒测试', '灰盒测试', '黑盒测试', '手机测试', '硬件测试', '测试经理', '测试其它', '运维', '运维工程师', '运维开发工程师', '网络工程师', '系统工程师',
          'IT支持', 'IDC', 'CDN', 'F5', '系统管理员', '病毒分析', 'WEB安全', '网络安全', '系统安全', '运维经理', '运维其它', 'DBA', 'MySQL',
@@ -30,6 +31,8 @@ def parseInfo(url,key):
 
     selector = etree.HTML(res.text)
 
+    soup = BeautifulSoup(res.text,'lxml')
+
     title = selector.xpath('//*[@id="pageContent"]/div[1]/div[1]/p/text()')
     salary = selector.xpath('//*[@id="pageContent"]/div[1]/p/text()')
     company = selector.xpath('//*[@id="pageContent"]/div[2]/a[1]/p/text()')
@@ -40,8 +43,9 @@ def parseInfo(url,key):
     edu = selector.xpath('//*[@id="pageContent"]/div[1]/div[2]/span[3]/text()')
     num = selector.xpath('//*[@id="pageContent"]/div[1]/div[2]/span[1]/text()')
     time = selector.xpath('//*[@id="pageContent"]/div[1]/div[1]/span/text()')
-    info = selector.xpath('string(//*[@id="pageContent"]/div[3]/div[2]/article)')
-    info = str(info).strip()
+    info = soup.find('div', class_='ain')
+    if info != None:
+        info = info.text
     position = {
         'name': title,
         'city':companyplace,
@@ -50,9 +54,9 @@ def parseInfo(url,key):
         'money':salary,
         'desc':info,
     }
-    with open(key+'_data.json','a',encoding='utf-8') as f:
+    with open('../data/'+key+'_data.json','a',encoding='utf-8') as f:
         f.write(json.dumps(position,ensure_ascii=False)+'\n')
-    print(position)
+    #print(position)
 
 
 def getUrl(url,key):
@@ -67,18 +71,20 @@ def getUrl(url,key):
         print(urls)
         for url in urls:
             parseInfo(url,key)
-            time.sleep(random.randrange(1, 4))
+            time.sleep(0.5)
 
 
 if __name__ == '__main__':
     for key in k:
-        # 第一页
-        url = 'https://search.51job.com/list/000000,000000,0000,00,9,99,' + key + ',2,1.html?lang=c&stype=&postchannel=0000&workyear=99&cotype=99&degreefrom=99&jobterm=99&companysize=99&providesalary=99&lonlat=0%2C0&radius=-1&ord_field=0&confirmdate=9&fromType=&dibiaoid=0&address=&line=&specialarea=00&from=&welfare='
-        getUrl(url,key)
-        # 后页[2,100)
-        urls = [
-            'https://search.51job.com/list/000000,000000,0000,00,9,99,' + key + ',2,{}.html?lang=c&stype=1&postchannel=0000&workyear=99&cotype=99&degreefrom=99&jobterm=99&companysize=99&lonlat=0%2C0&radius=-1&ord_field=0&confirmdate=9&fromType=&dibiaoid=0&address=&line=&specialarea=00&from=&welfare='.format(
-                i) for i in range(2, 50)]
-        for url in urls:
-            getUrl(url,key)
+        try:
+            url = 'https://search.51job.com/list/000000,000000,0000,00,9,99,' + key + ',2,1.html?lang=c&stype=&postchannel=0000&workyear=99&cotype=99&degreefrom=99&jobterm=99&companysize=99&providesalary=99&lonlat=0%2C0&radius=-1&ord_field=0&confirmdate=9&fromType=&dibiaoid=0&address=&line=&specialarea=00&from=&welfare='
+            getUrl(url, key)
+            urls = [
+                'https://search.51job.com/list/000000,000000,0000,00,9,99,' + key + ',2,{}.html?lang=c&stype=1&postchannel=0000&workyear=99&cotype=99&degreefrom=99&jobterm=99&companysize=99&lonlat=0%2C0&radius=-1&ord_field=0&confirmdate=9&fromType=&dibiaoid=0&address=&line=&specialarea=00&from=&welfare='.format(
+                    i) for i in range(2, 20)]
+            for i in range(len(urls)):
+                getUrl(urls[i], key)
+        except Exception as e:
+            print(e)
+
 

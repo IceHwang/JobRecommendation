@@ -37,6 +37,8 @@ class DataCleanner():
                 continue
             myJson = json.loads(jsonString,strict=False)
             myJson["name"]=label
+            if myJson["desc"]=="" or myJson["desc"]== None:
+                continue
             cleanedJsonList.append(myJson)
         return cleanedJsonList
 
