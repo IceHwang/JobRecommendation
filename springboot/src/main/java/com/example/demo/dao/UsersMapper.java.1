@@ -1,0 +1,18 @@
+package com.example.demo.dao;
+
+import com.example.demo.entity.Users;
+import org.apache.ibatis.annotations.Param;
+
+public interface UsersMapper {
+    int deleteByPrimaryKey(@Param("id") Integer id, @Param("username") String username);
+
+    int insert(Users record);
+
+    int insertSelective(Users record);
+
+    Users selectByPrimaryKey(@Param("id") Integer id, @Param("username") String username);
+
+    int updateByPrimaryKeySelective(Users record);
+
+    int updateByPrimaryKey(Users record);
+}
