@@ -13,7 +13,6 @@ def main():
     file.saveJsonList("test.json",mylist)
     print(mylist)
 
-    return
 
 if __name__ == '__main__':
     main()
