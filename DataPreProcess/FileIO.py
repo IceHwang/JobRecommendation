@@ -51,4 +51,27 @@ class FileIO():
                     f.write(j+' ')
                 f.write('\n')
 
+    def setUserDict(self,filename,dictList):
+        with open(self.dpath+filename,'w',encoding='utf-8') as f:
+            for i in dictList:
+                f.write(i)
+                f.write('\n')
+
+    def getUserDict(self,filename):
+        words = ""
+        with open(self.dpath+filename, 'r', encoding='utf-8') as f:
+            for line in f.readlines():
+                words = words + line
+        return words.split('\n')[:-1]
+
+def main():
+    f = FileIO('')
+    f.setUserDict('mm.txt',['asc','sdc','jishy'])
+    print(f.getUserDict('mm.txt'))
+
+
+if __name__ == '__main__':
+    main()
+
+
 

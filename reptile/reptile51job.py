@@ -71,7 +71,7 @@ def getUrl(url,key):
         print(urls)
         for url in urls:
             parseInfo(url,key)
-            time.sleep(0.5)
+            time.sleep(random.randint(1,3))
 
 
 if __name__ == '__main__':

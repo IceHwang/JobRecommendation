@@ -22,11 +22,11 @@ def main():
     # file.setStopWordList("similiarWord.txt",stopWordList)
 
     totalList=[]
-    totalList=totalList+transformTest("C_data.json","c")
-    totalList=totalList+transformTest("C++_data.json","c++")
-    totalList=totalList+transformTest("Hadoop_data.json","hadoop")
-    totalList=totalList+transformTest("Java_data.json","java")
-    totalList=totalList+transformTest("PHP_data.json","php")
+    totalList=totalList+transformTest("C_data.json","c职位")
+    totalList=totalList+transformTest("C++_data.json","c++职位")
+    totalList=totalList+transformTest("Hadoop_data.json","hadoop职位")
+    totalList=totalList+transformTest("Java_data.json","java职位")
+    totalList=totalList+transformTest("PHP_data.json","php职位")
     file = FileIO("../data/")
     file.saveJsonList("test.txt",totalList)
     return
