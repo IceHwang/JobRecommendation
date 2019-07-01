@@ -8,7 +8,7 @@ from bs4 import BeautifulSoup
 
 etree = html.etree
 k = ['HTML5', 'Android', 'iOS',
-         'WP', '移动开发', '前端开发', 'web前端', 'Flash', 'html5', 'JavaScript', 'U3D', 'COCOS2D-X', '前端开发', '深度学习',
+         'WP', '移动开发', '前端开发', 'web前端', 'Flash', 'html5', 'JavaScript', 'U3D', 'COCOS2D-X', '深度学习',
          '机器学习', '图像处理', '图像识别', '语音识别', '机器视觉', '算法工程师', '自然语言处理', '测试', '测试工程师', '自动化测试', '功能测试', '性能测试', '测试开发',
          '游戏测试', '白盒测试', '灰盒测试', '黑盒测试', '手机测试', '硬件测试', '测试经理', '测试其它', '运维', '运维工程师', '运维开发工程师', '网络工程师', '系统工程师',
          'IT支持', 'IDC', 'CDN', 'F5', '系统管理员', '病毒分析', 'WEB安全', '网络安全', '系统安全', '运维经理', '运维其它', 'DBA', 'MySQL',
@@ -71,7 +71,7 @@ def getUrl(url,key):
         print(urls)
         for url in urls:
             parseInfo(url,key)
-            time.sleep(random.randint(1,3))
+            time.sleep(0.5)
 
 
 if __name__ == '__main__':
