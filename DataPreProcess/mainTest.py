@@ -1,7 +1,5 @@
-import DataCleanner
-import KeywordMapper
-from FileIO import FileIO
-
+from DataPreProcess import DataCleanner, KeywordMapper
+from DataPreProcess.FileIO import FileIO
 
 
 def transformTest(fileName,label):
