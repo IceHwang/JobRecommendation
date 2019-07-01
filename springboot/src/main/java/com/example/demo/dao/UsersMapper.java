@@ -2,8 +2,15 @@ package com.example.demo.dao;
 
 import com.example.demo.entity.Users;
 
-public interface UsersMapper {
-    int insert(Users record);
+import java.util.List;
 
-    int insertSelective(Users record);
+public interface UsersMapper {
+
+    //user login
+    public Users login(Users users);
+    //user register
+    boolean addUsers(Users users);
+    //findall users
+    List<Users>findAllUsers();
+
 }
