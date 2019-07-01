@@ -11,7 +11,7 @@ public class LoginController {
     @ResponseBody
     @RequestMapping("/register")
     public String Login() {
-        return "hello";
+        return "hello world";
 
     }
 }
