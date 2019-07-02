@@ -11,12 +11,12 @@ import java.io.Serializable;
 import java.util.Arrays;
 import java.util.List;
 
-public class FPTreeAnalyzer implements Serializable {
+public class  FPTreeAnalyzer implements Serializable {
 
 
-    public String run() {
+    public static String run() {
         String inputFile = "../data/test.txt";
-        double minSupport = 0.09;
+        double minSupport = 0.02;
         int numPartition = -1;
 
         SparkConf sparkConf = new SparkConf().setAppName("FPTreeAnalyzer");

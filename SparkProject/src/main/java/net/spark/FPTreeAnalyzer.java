@@ -1,6 +1,6 @@
 package net.spark;
 
-import com.clearspring.analytics.util.Lists;
+
 import org.apache.spark.SparkConf;
 import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.api.java.JavaSparkContext;
@@ -14,11 +14,18 @@ import java.util.Arrays;
 import java.util.List;
 
 public class FPTreeAnalyzer implements Serializable {
+    public static void main(String[] args) {
+        ArrayList<String> list=run();
+        list.forEach(System.out::println);
+        System.out.println(list.size());
 
-    public static void main(String[] args)
+    }
+
+    public static ArrayList<String> run()
     {
-        String inputFile = "hdfs://node-master:9000/usr/test.txt";
-        double minSupport=0.09;
+//        String inputFile = "hdfs://192.168.152.129:9000/usr/test.txt";
+        String inputFile = "../data/test.txt";
+        double minSupport=0.04;
         int numPartition=-1;
 
         SparkConf sparkConf= new SparkConf().setAppName("FPTreeAnalyzer");
@@ -34,11 +41,14 @@ public class FPTreeAnalyzer implements Serializable {
         FPGrowthModel<String> model = new FPGrowth()
                 .setMinSupport(minSupport)
                 .run(transactions);
+
+        ArrayList<String> list= new ArrayList<>();
+
         for(FPGrowth.FreqItemset<String> s: model.freqItemsets().toJavaRDD().collect())
         {
-            System.out.println("["+ Joiner.on(",").join(s.javaItems())+"]");
-            System.out.println("$$$$$$$$$$$$$$$$$$$$");
+            list.add("["+ Joiner.on(",").join(s.javaItems())+"]");
         }
         sc.stop();
+        return list;
     }
 }

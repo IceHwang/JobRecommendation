@@ -12,8 +12,8 @@ public class LoginController {
     @ResponseBody
     @RequestMapping("/register")
     public String Login() {
-        FPTreeAnalyzer sparkService = new FPTreeAnalyzer();
-        String result = sparkService.run();
+
+        String result = FPTreeAnalyzer.run();
         return result;
 
 
