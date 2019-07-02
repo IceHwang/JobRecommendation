@@ -7,9 +7,10 @@ def transformTest(fileName,label):
 
     stopWordList=file.getStopWordList("stopWord.txt")
     similiarWordList=file.getSimiliarWordList("similiarWord.txt")
+    userDict = file.getUserDict('userDict.txt')
     JsonStringList=file.getJsonStringList(fileName)
     jsonList=DataCleanner.DataCleanner.getCleanedJsonList(label,JsonStringList,stopWordList,similiarWordList)
-    mylist=KeywordMapper.KeyWordMapper.transformJsonList(jsonList)
+    mylist=KeywordMapper.KeyWordMapper.transformJsonList(jsonList,userWordsDict=userDict)
     print(mylist)
     return mylist
 
@@ -20,6 +21,7 @@ def main():
     # file.setSimiliarWordList("similiarWord.txt",similiarWordList)
     # stopWordList = file.getSimiliarWordList("stopWordList.txt")
     # file.setStopWordList("similiarWord.txt",stopWordList)
+    file.setUserDict('userDict.txt',['以太坊'])
 
     totalList=[]
     totalList=totalList+transformTest("算法工程师_data.json","算法工程师职位")

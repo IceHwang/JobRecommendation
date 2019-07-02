@@ -13,22 +13,22 @@ class KeyWordMapper:
             data_desc = line['desc']
             data_desc = data_desc.split("\n")
             data = "".join(("".join(data_desc)).split("，"))
-            for x, w in jieba.analyse.extract_tags(data, topK=50, withWeight=True, allowPOS=('nz', 'eng')):
+            for x, w in jieba.analyse.extract_tags(data, topK=80, withWeight=True, allowPOS=('nz','eng')):
                 x = x.lower()
                 if x in fetch.keys():
                     fetch[x] += 1
                 else:
                     fetch[x] = 1
 
-        lists = [x[0] for x in sorted(fetch.items(), key=lambda x: x[1], reverse=True)[:30]]
-        print(lists)
+        lists = [x[0] for x in sorted(fetch.items(), key=lambda x: x[1], reverse=True)[:50]]
+        #print(lists)
         Jsonlist = []
         for line in jsonList:
             data_desc = line['desc']
             data_desc = data_desc.split("\n")
             data = "".join(("".join(data_desc)).split("，"))
             skillList = []
-            for x, w in jieba.analyse.extract_tags(data, topK=50, withWeight=True, allowPOS=('nz', 'eng')):
+            for x, w in jieba.analyse.extract_tags(data, topK=30, withWeight=True, allowPOS=('nz', 'eng')):
                 x = x.lower()
                 if x in lists:
                     skillList.append(x)
