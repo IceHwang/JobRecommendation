@@ -71,7 +71,7 @@ function checkAll() {
                 url: "http://localhost:8080/user/register",
                 dataType: "json",
                 async: true,
-                type: "post",
+                type: "post",//增 //get 查 pot 更新 //delete
                 data: {
                     "nickname": nickname,
                     "username": email,
