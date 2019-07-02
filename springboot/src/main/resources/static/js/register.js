@@ -67,16 +67,15 @@ function checkAll() {
         var email = $("#email").val();
         var pass = $("#pass").val();
 
+        var data = {data:{}}
+
+
         $.ajax({
                 url: "http://localhost:8080/user/register",
                 dataType: "json",
                 async: true,
                 type: "post",//增 //get 查 pot 更新 //delete
-                data: {
-                    "nickname": nickname,
-                    "username": email,
-                    "password": pass
-                },
+                data: {},
                 success: function (res) {
                     if (res.status) {
                         okStyle();
@@ -117,6 +116,6 @@ function regOk() {
         setError(info);
         time--;
     } else {
-        window.location.href = "index.html";
+        window.location.href = "../index.html";
     }
 }
