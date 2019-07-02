@@ -3,7 +3,7 @@ $(function () {
     logOut();
     getBlockInfo();
     home();
-    search();
+    //search();
 
 });
 
