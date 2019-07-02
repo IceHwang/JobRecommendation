@@ -39,11 +39,14 @@ class FileIO():
         SimiliarWord = []
         with open(self.dpath + filename, 'r', encoding='utf-8') as f:
             for lines in f.readlines():
-                word = {}
-                word['word'] = lines.split(':')[0]
-                similiarWordList = lines.split(':')[1].split(' ')
-                word['similiarWordList'] = similiarWordList[:len(similiarWordList)-1]
-                SimiliarWord.append(word)
+                if lines != '' and lines != '\n':
+                    word = {}
+                    word['word'] = lines.split(':')[0]
+                    similiarWordList = lines.split(':')[1].split(' ')
+                    if '\n' in similiarWordList:
+                        similiarWordList = similiarWordList[:len(similiarWordList)-1]
+                    word['similiarWordList'] = similiarWordList
+                    SimiliarWord.append(word)
 
         return SimiliarWord
     def saveJsonList(self,filename, JsonList):
