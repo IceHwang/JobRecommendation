@@ -1,59 +1,49 @@
 package com.example.demo.controller;
 
-import com.example.demo.dao.UsersMapper;
-import com.example.demo.entity.Users;
-import com.example.demo.service.UsersService;
+import com.example.demo.dao.Users_userMapper;
+import com.example.demo.entity.Users_user;
+import com.example.demo.service.Users_userService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.ModelAndView;
 
 import java.util.HashMap;
-import java.util.Map;
 
 @RestController// return jason data
+@RequestMapping("/user")
 public class UserController {
 
-//    @PostMapping(value = "/user/login")
-//    public String login(@RequestParam("username") String username,
-//                        @RequestParam("password") String password,
-//                        Map<String,Object> map){
-//
-//            map.put("msg", "password error");
-//        return "login.html";
-//    }
-// status: true/false
-    //data:object/string
-    //errmsg:return the errmsg directly
-    //users login
-    private UsersMapper usersMapper;
-    @RequestMapping(value = "/user/login",method = RequestMethod.GET)
-    public String login(Users users){
-        Users users1= usersMapper.login(users);
-        if (users1 !=null){
-            return "success";
-        }
-        else
-            return "error";
-    }
-    //users register
-    @RequestMapping("/user/register")
+    private final Users_user ERR_CREATE_USERS = null;
+    private final String errmsg = "errmsg";
+    Users_userService users_usersService;
     @Autowired
-    UsersService usersService;
-    public HashMap<String,Object> register(Users users){
-        Users addUsers = usersService.addUsers(users);
-    }
-    public String addUsers(Users users){
-       // ModelAndView mv =  new   ModelAndView();
-        boolean flag = usersMapper.addUsers(users);
-        if (flag){
-            return "success";
+    @RequestMapping(value = "/register")
+    public HashMap<String,Object> register(Users_user users_user){
+        HashMap<String,Object> resp = new HashMap<>();
+        Users_user insertuser= Users_userService.insert(users_user);
+        if (insertuser == ERR_CREATE_USERS){
+            resp.put("status",false);
+            resp.put("errmsg","Server Error");
         }
-        else
-            return "error";
+        else{
+            resp.put("status",true);
+            resp.put("data",users_user);
+        }
+        return resp;
     }
-    public boolean updateUsers(Users users);
-    //deleteUsers
-    public boolean deleteUsers(Users users);
+    @RequestMapping(value = "/login")
+    public HashMap<String,Object> register(Users_user users_user){
+        HashMap<String,Object> resp = new HashMap<>();
+        Users_user selectuser= Users_userService.selectByPrimaryKey(email);
+        if (selectuser == ERR_CREATE_USERS){
+            resp.put("status",false);
+            resp.put("errmsg","Your account hasn't been registered yet");
+        }
+        else{
+            resp.put("status",true);
+        }
+        return resp;
+    }
+
+
 
 }

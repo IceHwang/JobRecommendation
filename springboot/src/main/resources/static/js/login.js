@@ -53,7 +53,6 @@ function checkAll() {
                 "password": pass
             },
             success: function (res) {
-
                 if (res.status) {
                     sessionStorage.user = JSON.stringify(res.data);
                     window.location.href = "../index.html";
