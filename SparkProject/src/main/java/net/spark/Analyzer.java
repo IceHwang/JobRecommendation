@@ -21,8 +21,10 @@ public class Analyzer implements Serializable {
     private String preferedJob=null;
     private static List<AssociationRules.Rule<String>> model=null;
     private ArrayList<String> relativeSkillList=null;
+    private double weightElement=1.2;
 
     public static void main(String[] args) {
+
         getSkillList().forEach(System.out::println);
 
         String[] skillArray={"tensorflow","pytorch","python","html","javascript","mysql","java","sql","c++","tomcat","cnn","svm"};
@@ -31,8 +33,10 @@ public class Analyzer implements Serializable {
         {
             list.add(s);
         }
-        Analyzer analyzer = new Analyzer(list,"");
-        String recommendJob=analyzer.getRecommendedJob();
+        Analyzer analyzer = new Analyzer(list,"机器学习算法工程师");
+
+        System.out.println("###########################");
+        String recommendJob=analyzer.getFirstRecommendedJob();
         System.out.println(recommendJob);
         System.out.println("###########################");
         ArrayList<String> recommendSkillList=analyzer.getRecommendedSkillList(recommendJob);
@@ -40,6 +44,18 @@ public class Analyzer implements Serializable {
         System.out.println("###########################");
         ArrayList<String> coreSkillList=analyzer.getCoreSkillList(recommendJob);
         coreSkillList.forEach(System.out::println);
+        System.out.println("###########################");
+
+        System.out.println("###########################");
+        recommendJob=analyzer.getSecondRecommendedJob();
+        System.out.println(recommendJob);
+        System.out.println("###########################");
+        recommendSkillList=analyzer.getRecommendedSkillList(recommendJob);
+        recommendSkillList.forEach(System.out::println);
+        System.out.println("###########################");
+        coreSkillList=analyzer.getCoreSkillList(recommendJob);
+        coreSkillList.forEach(System.out::println);
+        System.out.println("###########################");
 
     }
 
@@ -51,7 +67,7 @@ public class Analyzer implements Serializable {
         createModel();
     }
 
-    public String getRecommendedJob()
+    public String getFirstRecommendedJob()
     {
         HashMap<String, Double> jobMap=new HashMap<>();
         skillList.forEach(skill->this.transformSkillsToJobs(skill,jobMap));
@@ -67,6 +83,24 @@ public class Analyzer implements Serializable {
 
         return recommendJobList.get(0).getKey();
     }
+
+    public String getSecondRecommendedJob()
+    {
+        HashMap<String, Double> jobMap=new HashMap<>();
+        skillList.forEach(skill->this.transformSkillsToJobs(skill,jobMap));
+        List<HashMap.Entry<String, Double>> recommendJobList = new ArrayList<Map.Entry<String, Double>>(jobMap.entrySet());
+        Collections.sort(recommendJobList, new Comparator<Map.Entry<String, Double>>() {
+
+            public int compare(Map.Entry<String, Double> o1, Map.Entry<String, Double> o2) {
+                return o2.getValue().compareTo(o1.getValue());
+            }
+        });
+
+//        recommendJobList.forEach(x-> System.out.println(x.toString()));
+
+        return recommendJobList.get(1).getKey();
+    }
+
 
     private ArrayList<String> getRelativeSkillList(String recommendJob)
     {
@@ -146,9 +180,6 @@ public class Analyzer implements Serializable {
         return result;
     }
 
-
-
-
     public static ArrayList<String> getSkillList()
     {
         if(model==null)
@@ -179,8 +210,8 @@ public class Analyzer implements Serializable {
                 return o2.getValue().compareTo(o1.getValue());
             }
         });
-        skillList.forEach(System.out::println);
-        System.out.println(skillList.size());
+//        skillList.forEach(System.out::println);
+//        System.out.println(skillList.size());
         return new ArrayList<String>(hashMap.keySet());
     }
 
@@ -205,18 +236,18 @@ public class Analyzer implements Serializable {
             if (flag==false)
                 return;
             double weight=x.confidence();
+            if(job.equals(preferedJob))
+                weight*=weightElement;
             if (!jobMap.containsKey(job))
                 jobMap.put(job,weight);
             else
                 jobMap.put(job,jobMap.get(job)+weight);
-            System.out.println(job+"=>"+skillList.toString()+";"+x.confidence());
+//            System.out.println(job+"=>"+skillList.toString()+";"+x.confidence());
 
         });
         return ;
 
     }
-
-
 
     public static void createModel()
     {
