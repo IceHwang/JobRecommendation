@@ -76,7 +76,7 @@ function checkAll() {
                 type: "post",//增 //get 查 pot 更新 //delete
                 data: {
                     "email":email,
-                    "pass" :pass
+                    "password" :pass
                       },
                 success: function (res) {
                     if (res.status) {
@@ -89,8 +89,6 @@ function checkAll() {
             }
         );
 
-
-        // regOk();
     }
 }
 
