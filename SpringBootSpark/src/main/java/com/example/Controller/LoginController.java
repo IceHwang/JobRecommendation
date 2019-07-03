@@ -1,6 +1,6 @@
 package com.example.Controller;
 
-import com.example.SparkService.FPTreeAnalyzer;
+import com.example.SparkService.Analyzer;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -13,7 +13,7 @@ public class LoginController {
     @RequestMapping("/register")
     public String Login() {
 
-        String result = FPTreeAnalyzer.run();
+        String result = Analyzer.test();
         return result;
 
 
