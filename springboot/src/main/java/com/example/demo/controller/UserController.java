@@ -1,6 +1,7 @@
 package com.example.demo.controller;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.example.demo.SparkService.Analyzer;
 import com.example.demo.entity.Users_user;
 import com.example.demo.mapper.UserMapper;
 import com.sun.corba.se.spi.ior.ObjectKey;
@@ -23,7 +24,7 @@ public class UserController {
     @RequestMapping(value = "/register")
 
     public HashMap<String,Object> register(Users_user users_user){
-        //System.out.println(users_user.getPassword());
+        System.out.println(users_user.getPassword());
         HashMap<String,Object> resp = new HashMap<>();
         QueryWrapper<Users_user> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("email",users_user.getEmail());
@@ -35,6 +36,7 @@ public class UserController {
         else{
             int success = userMapper.insert(users_user);
             if (success != 0){
+                System.out.println(Analyzer.getTestResultHashMap().toString());
                 resp.put("status",true);
                 resp.put("data",users_user);
             }

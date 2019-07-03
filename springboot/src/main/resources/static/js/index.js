@@ -55,7 +55,7 @@ function checkAll() {
             success: function (res) {
                 if (res.status) {
                     sessionStorage.user = JSON.stringify(res.data);
-                    window.location.href = "html/forms.html";
+                    window.location.href = "home.html";
                 } else {
                     setError(res.message);
                 }
