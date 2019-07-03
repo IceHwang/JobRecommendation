@@ -1,5 +1,3 @@
-package com.example.demo.SparkService;
-
 import org.apache.spark.SparkConf;
 import org.apache.spark.api.java.JavaSparkContext;
 import org.apache.spark.mllib.linalg.Vector;
@@ -19,7 +17,7 @@ public class LogisticRegression {
     LogisticRegressionModel model;
     LogisticRegression()
     {
-        String path = "../data/input/data.txt";
+        String path = "input/data.txt";
         SparkConf sparkConf = new SparkConf().setAppName("Regression").setMaster("local");
         JavaSparkContext jsc = new JavaSparkContext(sparkConf);
         this.model = trainLogisticRegressionModel(jsc,path);
@@ -43,7 +41,7 @@ public class LogisticRegression {
     {
         JavaRDD<LabeledPoint> data = MLUtils.loadLibSVMFile(sc.sc(), path).toJavaRDD();
 
-        JavaRDD<LabeledPoint>[] splits = data.randomSplit(new double[] {0.7, 0.3}, 9L);
+        JavaRDD<LabeledPoint>[] splits = data.randomSplit(new double[] {0.9, 0.1}, 11L);
         JavaRDD<LabeledPoint> training = splits[0].cache();
         JavaRDD<LabeledPoint> test = splits[1];
         LogisticRegressionModel model = new LogisticRegressionWithLBFGS()
@@ -53,6 +51,8 @@ public class LogisticRegression {
                 new Tuple2<>(model.predict(p.features()), p.label()));
         System.out.println(predictionAndLabels.collect());
         MulticlassMetrics metrics = new MulticlassMetrics(predictionAndLabels.rdd());
+        double accuracy = metrics.accuracy();
+        System.out.println("Accuracy = " + accuracy);
         return model;
     }
     private static void SaveModel(LogisticRegressionModel model,JavaSparkContext sc,String path)
@@ -69,7 +69,7 @@ public class LogisticRegression {
     {
         String[] skills = {""};
         try {
-            BufferedReader in = new BufferedReader(new FileReader("../data/input/skills.txt"));
+            BufferedReader in = new BufferedReader(new FileReader("input/skills.txt"));
             skills = in.readLine().split(" ");
             in.close();
 
