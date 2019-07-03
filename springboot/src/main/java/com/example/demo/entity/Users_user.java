@@ -1,11 +1,16 @@
 package com.example.demo.entity;
 
+
+import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableName;
+
+@TableName("users_user")
 public class Users_user {
-    private String email;
-
-    private Integer id;
-
+    @TableId("id")
+    private int id;
     private String password;
+    private String email;
 
     public Users_user(String email,String password) {
         this.email = email;
@@ -24,13 +29,10 @@ public class Users_user {
         this.email = email == null ? null : email.trim();
     }
 
-    public Integer getId() {
+    public int getId() {
         return id;
     }
 
-    public void setId(Integer id) {
-        this.id = id;
-    }
 
     public String getPassword() {
         return password;
