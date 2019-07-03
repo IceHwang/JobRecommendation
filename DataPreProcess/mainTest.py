@@ -1,6 +1,6 @@
 from DataPreProcess import DataCleanner, KeywordMapper
 from DataPreProcess.FileIO import FileIO
-
+from DataPreProcess.Word2Vector import Word2Vector
 
 def transformTest(fileName,label):
     file = FileIO("../data/")
@@ -56,6 +56,7 @@ def main():
 
     file = FileIO("../data/")
     file.saveJsonList("test.txt",totalList)
+    Word2Vector.word2Vec('../data/test.txt')
     return
 
 

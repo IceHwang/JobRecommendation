@@ -1,6 +1,7 @@
 package com.example.demo.SparkService;
 
 
+import com.alibaba.fastjson.JSONObject;
 import org.apache.spark.SparkConf;
 import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.api.java.JavaSparkContext;
@@ -14,77 +15,118 @@ import java.util.*;
 
 public class Analyzer implements Serializable {
 
-
-
     private ArrayList<String> skillList=null;
     private String preferedJob=null;
-    private static List<AssociationRules.Rule<String>> model=null;
     private ArrayList<String> relativeSkillList=null;
     private double weightElement=1.2;
 
+    private static List<AssociationRules.Rule<String>> model=null;
+    private static LogisticRegression logisticRegression=null;
+
     public static void main(String[] args) {
+        System.out.println(test());
+    }
 
-        getSkillList().forEach(System.out::println);
+    public static String test() {
 
-        String[] skillArray={"tensorflow","pytorch","python","html","javascript","mysql","java","sql","c++","tomcat","cnn","svm"};
-        ArrayList<String>  list = new ArrayList<>();
-        for(String s:skillArray)
-        {
-            list.add(s);
-        }
+//        getSkillList().forEach(System.out::println);
+
+        String[] skillArray={"tensorflow","ajax","docker","html","javascript","mysql","java","sql","c++","tomcat","spring","svm"};
+        ArrayList<String> list = arrayToStringArrayList(skillArray);
+
         Analyzer analyzer = new Analyzer(list,"机器学习算法工程师");
+        HashMap<String,Object> hashMap=analyzer.getResultHashMap();
 
-        System.out.println("###########################");
-        String recommendJob=analyzer.getFirstRecommendedJob();
-        System.out.println(recommendJob);
-        System.out.println("###########################");
-        ArrayList<String> recommendSkillList=analyzer.getRecommendedSkillList(recommendJob);
-        recommendSkillList.forEach(System.out::println);
-        System.out.println("###########################");
-        ArrayList<String> coreSkillList=analyzer.getCoreSkillList(recommendJob);
-        coreSkillList.forEach(System.out::println);
-        System.out.println("###########################");
+        JSONObject object = new JSONObject(hashMap);
+        return object.toString();
 
-        System.out.println("###########################");
-        recommendJob=analyzer.getSecondRecommendedJob();
-        System.out.println(recommendJob);
-        System.out.println("###########################");
-        recommendSkillList=analyzer.getRecommendedSkillList(recommendJob);
-        recommendSkillList.forEach(System.out::println);
-        System.out.println("###########################");
-        coreSkillList=analyzer.getCoreSkillList(recommendJob);
-        coreSkillList.forEach(System.out::println);
-        System.out.println("###########################");
+
+
 
     }
 
+    public static HashMap<String,Object> getTestResultHashMap() {
+
+        String[] skillArray={"tensorflow","pytorch","python","html","javascript","mysql","java","sql","c++","tomcat","cnn","svm"};
+        ArrayList<String> list = arrayToStringArrayList(skillArray);
+
+        Analyzer analyzer = new Analyzer(list,"机器学习算法工程师");
+        HashMap<String,Object> hashMap=analyzer.getResultHashMap();
+
+//        JSONObject object = new JSONObject(hashMap);
+//        return object.toString();
+        return hashMap;
+    }
+
+    public static void init()
+    {
+        createModel();
+        logisticRegression=new LogisticRegression();
+    }
 
     public Analyzer(ArrayList<String> skillList, String preferedJob)
     {
         this.skillList=skillList;
         this.preferedJob=preferedJob;
         createModel();
+        if (logisticRegression==null)
+            logisticRegression=new LogisticRegression();
     }
 
-    public String getFirstRecommendedJob()
+    public Analyzer(HashMap<String,Object> hashMap)
     {
-        HashMap<String, Double> jobMap=new HashMap<>();
-        skillList.forEach(skill->this.transformSkillsToJobs(skill,jobMap));
-        List<HashMap.Entry<String, Double>> recommendJobList = new ArrayList<Map.Entry<String, Double>>(jobMap.entrySet());
-        Collections.sort(recommendJobList, new Comparator<Map.Entry<String, Double>>() {
-
-            public int compare(Map.Entry<String, Double> o1, Map.Entry<String, Double> o2) {
-                return o2.getValue().compareTo(o1.getValue());
-            }
-        });
-
-        recommendJobList.forEach(x-> System.out.println(x.toString()));
-
-        return recommendJobList.get(0).getKey();
+        String preferedJob=(String) (hashMap.get("preferedJob"));
+        String[] skillArray= (String[]) (hashMap.get("skillArray"));
+        this.skillList=arrayToStringArrayList(skillArray);
+        this.preferedJob=preferedJob;
+        createModel();
+        if (logisticRegression==null)
+            logisticRegression=new LogisticRegression();
     }
 
-    public String getSecondRecommendedJob()
+    public static Object[] arrayListToArray(ArrayList<String> arrayList)
     {
+        return (arrayList.toArray());
+    }
+
+    public static ArrayList<String> arrayToStringArrayList(String[] array)
+    {
+        ArrayList<String>  list = new ArrayList<>();
+        for(String s:array)
+        {
+            list.add(s);
+        }
+        return list;
+    }
+
+    public HashMap<String,Object> getResultHashMap()
+    {
+        HashMap<String,Object> hashMap=new HashMap<>();
+        String[] jobs=new String[3];
+        ArrayList<Object[]> recommendSkillLists=new ArrayList<>();
+        ArrayList<Object[]> coreSkillLists=new ArrayList<>();
+        ArrayList<Map.Entry<String,Double>> regressionResult=getRecommendedJobList_Logistic();
+
+        for (int i = 0; i < 3; i++) {
+            String recommendJob = regressionResult.get(i).getKey();
+//            String recommendJob=this.getRecommendedJob(i);
+            jobs[i]=recommendJob;
+            ArrayList<String> recommendSkillList=this.getRecommendedSkillList(recommendJob);
+            ArrayList<String> coreSkillList=this.getCoreSkillList(recommendJob);
+            recommendSkillLists.add(recommendSkillList.toArray());
+            coreSkillLists.add(coreSkillList.toArray());
+        }
+        hashMap.put("jobs",jobs);
+        hashMap.put("recommendSkills",recommendSkillLists.toArray());
+        hashMap.put("coreSkills",coreSkillLists.toArray());
+
+        return hashMap;
+    }
+
+    public String getRecommendedJob(int num)
+    {
+
+
         HashMap<String, Double> jobMap=new HashMap<>();
         skillList.forEach(skill->this.transformSkillsToJobs(skill,jobMap));
         List<HashMap.Entry<String, Double>> recommendJobList = new ArrayList<Map.Entry<String, Double>>(jobMap.entrySet());
@@ -97,7 +139,18 @@ public class Analyzer implements Serializable {
 
 //        recommendJobList.forEach(x-> System.out.println(x.toString()));
 
-        return recommendJobList.get(1).getKey();
+        return recommendJobList.get(num).getKey();
+    }
+
+    public ArrayList<Map.Entry<String,Double>> getRecommendedJobList_Logistic()
+    {
+        ArrayList<Map.Entry<String,Double>> regressionResult=logisticRegression.getPredictedJobWithScore(skillList);
+        regressionResult.forEach(x->{
+            if((x.getKey()+"职位").equals(preferedJob))
+                x.setValue(x.getValue()*weightElement);
+        });
+        Collections.sort(regressionResult,(a,b)->b.getValue().compareTo(a.getValue()));
+        return regressionResult;
     }
 
     private ArrayList<String> getRelativeSkillList(String recommendJob)
@@ -113,6 +166,8 @@ public class Analyzer implements Serializable {
             double weight=x.confidence();
             skillList.forEach(skill->
             {
+                if (skill.contains("职位"))
+                    return;
                 if(!hashMap.containsKey(skill))
                 {
                     hashMap.put(skill,weight);

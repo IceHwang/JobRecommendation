@@ -69,6 +69,11 @@ public class UserController {
         return resp;
     }
 
-
+    @RequestMapping(value = "/recommend")
+    public HashMap<String,Object> recommend(HashMap<String,Object> hashMap){
+//        Analyzer analyzer = new Analyzer(hashMap);
+//        return analyzer.getResultHashMap();
+        return Analyzer.getTestResultHashMap();
+    }
 
 }
