@@ -1,3 +1,5 @@
+package com.example.demo.SparkService;
+
 import org.apache.spark.SparkConf;
 import org.apache.spark.api.java.JavaSparkContext;
 import org.apache.spark.mllib.linalg.Vector;

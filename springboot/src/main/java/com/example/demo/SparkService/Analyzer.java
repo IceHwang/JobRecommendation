@@ -17,10 +17,11 @@ public class Analyzer implements Serializable {
 
     private ArrayList<String> skillList=null;
     private String preferedJob=null;
-    private static List<AssociationRules.Rule<String>> model=null;
     private ArrayList<String> relativeSkillList=null;
     private double weightElement=1.2;
 
+    private static List<AssociationRules.Rule<String>> model=null;
+    private static LogisticRegression logisticRegression=null;
 
     public static void main(String[] args) {
         System.out.println(test());
@@ -30,7 +31,7 @@ public class Analyzer implements Serializable {
 
 //        getSkillList().forEach(System.out::println);
 
-        String[] skillArray={"tensorflow","pytorch","python","html","javascript","mysql","java","sql","c++","tomcat","cnn","svm"};
+        String[] skillArray={"tensorflow","ajax","docker","html","javascript","mysql","java","sql","c++","tomcat","spring","svm"};
         ArrayList<String> list = arrayToStringArrayList(skillArray);
 
         Analyzer analyzer = new Analyzer(list,"机器学习算法工程师");
@@ -57,11 +58,19 @@ public class Analyzer implements Serializable {
         return hashMap;
     }
 
+    public static void init()
+    {
+        createModel();
+        logisticRegression=new LogisticRegression();
+    }
+
     public Analyzer(ArrayList<String> skillList, String preferedJob)
     {
         this.skillList=skillList;
         this.preferedJob=preferedJob;
         createModel();
+        if (logisticRegression==null)
+            logisticRegression=new LogisticRegression();
     }
 
     public Analyzer(HashMap<String,Object> hashMap)
@@ -71,6 +80,8 @@ public class Analyzer implements Serializable {
         this.skillList=arrayToStringArrayList(skillArray);
         this.preferedJob=preferedJob;
         createModel();
+        if (logisticRegression==null)
+            logisticRegression=new LogisticRegression();
     }
 
     public static Object[] arrayListToArray(ArrayList<String> arrayList)
@@ -94,11 +105,12 @@ public class Analyzer implements Serializable {
         String[] jobs=new String[3];
         ArrayList<Object[]> recommendSkillLists=new ArrayList<>();
         ArrayList<Object[]> coreSkillLists=new ArrayList<>();
+        ArrayList<Map.Entry<String,Double>> regressionResult=getRecommendedJobList_Logistic();
 
         for (int i = 0; i < 3; i++) {
-            String recommendJob=this.getRecommendedJob(i);
+            String recommendJob = regressionResult.get(i).getKey();
+//            String recommendJob=this.getRecommendedJob(i);
             jobs[i]=recommendJob;
-
             ArrayList<String> recommendSkillList=this.getRecommendedSkillList(recommendJob);
             ArrayList<String> coreSkillList=this.getCoreSkillList(recommendJob);
             recommendSkillLists.add(recommendSkillList.toArray());
@@ -130,6 +142,17 @@ public class Analyzer implements Serializable {
         return recommendJobList.get(num).getKey();
     }
 
+    public ArrayList<Map.Entry<String,Double>> getRecommendedJobList_Logistic()
+    {
+        ArrayList<Map.Entry<String,Double>> regressionResult=logisticRegression.getPredictedJobWithScore(skillList);
+        regressionResult.forEach(x->{
+            if((x.getKey()+"职位").equals(preferedJob))
+                x.setValue(x.getValue()*weightElement);
+        });
+        Collections.sort(regressionResult,(a,b)->b.getValue().compareTo(a.getValue()));
+        return regressionResult;
+    }
+
     private ArrayList<String> getRelativeSkillList(String recommendJob)
     {
         if(model==null)
@@ -143,6 +166,8 @@ public class Analyzer implements Serializable {
             double weight=x.confidence();
             skillList.forEach(skill->
             {
+                if (skill.contains("职位"))
+                    return;
                 if(!hashMap.containsKey(skill))
                 {
                     hashMap.put(skill,weight);
