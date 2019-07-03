@@ -33,7 +33,7 @@ public class UserController {
     @RequestMapping(value = "/login")
     public HashMap<String,Object> register(Users_user users_user){
         HashMap<String,Object> resp = new HashMap<>();
-        Users_user selectuser= Users_userService.selectByPrimaryKey(email);
+        Users_user selectuser= Users_userService.selectByPrimaryKey(users_user);
         if (selectuser == ERR_CREATE_USERS){
             resp.put("status",false);
             resp.put("errmsg","Your account hasn't been registered yet");
