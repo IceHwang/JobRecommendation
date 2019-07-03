@@ -36,7 +36,6 @@ public class UserController {
         else{
             int success = userMapper.insert(users_user);
             if (success != 0){
-                System.out.println(Analyzer.getTestResultHashMap().toString());
                 resp.put("status",true);
                 resp.put("data",users_user);
             }
