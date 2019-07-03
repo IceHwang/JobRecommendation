@@ -1,5 +1,6 @@
 package com.example.demo.controller;
 
+import com.example.demo.SparkService.Analyzer;
 import com.example.demo.dao.Users_userMapper;
 import com.example.demo.entity.Users_user;
 import com.example.demo.service.Users_userService;
@@ -43,6 +44,11 @@ public class UserController {
         return resp;
     }
 
-
+    @RequestMapping(value = "/recommend")
+    public HashMap<String,Object> recommend(HashMap<String,Object> hashMap){
+//        Analyzer analyzer = new Analyzer(hashMap);
+//        return analyzer.getResultHashMap();
+        return Analyzer.getTestResultHashMap();
+    }
 
 }
