@@ -22,7 +22,7 @@ public class UserController {
         Users_user insertuser= Users_userService.insert(users_user);
         if (insertuser == ERR_CREATE_USERS){
             resp.put("status",false);
-            resp.put("errmsg","Server Error");
+           // resp.put("errmsg","Server Error");
         }
         else{
             resp.put("status",true);

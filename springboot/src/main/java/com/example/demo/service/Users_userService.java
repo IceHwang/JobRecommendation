@@ -5,6 +5,8 @@ import com.example.demo.entity.Users_user;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class Users_userService {
     @Autowired
@@ -18,18 +20,23 @@ public class Users_userService {
         return users_user;
     }
     //user login
-    public Users_user selectByPrimaryKey(String email){
-        Users_user success = users_userMapper.selectByPrimaryKey(email);
+    public Users_user selectByPrimaryKey(Users_user users_user){
+        Users_user success = users_userMapper.selectByPrimaryKey(users_user);
          return success;
     }
 
-    public boolean updateByPrimaryKeySelective(Users_user record){
-        Users_user success =users_userMapper.updateByPrimaryKeySelective(record);
+    public boolean updateByPrimaryKeySelective(Users_user users_user){
+        Users_user success =users_userMapper.updateByPrimaryKeySelective(users_user);
          if (success == null){
              return false;
          }
          else
              return true;
+    }
+
+    public List<Users_user> findAll(){
+        List<Users_user> success = users_userMapper.findAll();
+        return success;
     }
     //construct a fuc to use the interface and return the final result to the controller
     //please coding it down here

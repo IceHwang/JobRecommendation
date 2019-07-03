@@ -72,4 +72,5 @@ function restore() {
 //set error info
 function setError(info) {
     $(".err").text(info);
+    window.location.href = "404.html";
 }
