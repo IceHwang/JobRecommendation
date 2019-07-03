@@ -1,28 +1,28 @@
 var time = 3;
 $(function () {
 
-    $("#name, #email, #pass, #pass-ag").focus(restore);
+    $("#email, #pass, #pass-ag").focus(restore);
     $("#email").blur(checkEmail);
-    $("#name").blur(checkName);
+    // $("#name").blur(checkName);
     $("#pass").blur(checkPass);
     $("#pass-ag").blur(checkPassAg);
     $("#submit").click(checkAll);
 
 });
 
-function checkName() {
-    var name = $("#name").val();
-    var flag = true;
-
-    if (name === "") {
-        setError("请输入用户名！");
-        flag = false;
-    } else if (name.length < 4 && name.length > 10) {
-        setError("4~10个字符长度了解一下！");
-        flag = false;
-    }
-    return flag;
-}
+// function checkName() {
+//     var name = $("#name").val();
+//     var flag = true;
+//
+//     if (name === "") {
+//         setError("请输入用户名！");
+//         flag = false;
+//     } else if (name.length < 4 && name.length > 10) {
+//         setError("4~10个字符长度了解一下！");
+//         flag = false;
+//     }
+//     return flag;
+// }
 
 function checkEmail() {
     var flag = true;
@@ -60,14 +60,13 @@ function checkPassAg() {
 }
 
 function checkAll() {
-    if (!(checkName() && checkPass() && checkEmail() && checkPassAg())) {
+    if ((!checkPass() && checkEmail() && checkPassAg())) {
         return false;
-    } else {
-        var nickname = $("#name").val();
+    }else {
+        //var nickname = $("#name").val();
         var email = $("#email").val();
         var pass = $("#pass").val();
 
-        var data = {data:{}}
 
 
         $.ajax({
@@ -75,7 +74,10 @@ function checkAll() {
                 dataType: "json",
                 async: true,
                 type: "post",//增 //get 查 pot 更新 //delete
-                data: {},
+                data: {
+                    "email":email,
+                    "pass" :pass
+                      },
                 success: function (res) {
                     if (res.status) {
                         okStyle();

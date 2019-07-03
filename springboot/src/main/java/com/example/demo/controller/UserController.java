@@ -11,15 +11,14 @@ import java.util.HashMap;
 @RestController// return jason data
 @RequestMapping("/user")
 public class UserController {
-
     private final Users_user ERR_CREATE_USERS = null;
     private final String errmsg = "errmsg";
     Users_userService users_usersService;
-    @Autowired
+
     @RequestMapping(value = "/register")
-    public HashMap<String,Object> register(Users_user users_user){
+    public HashMap<String,Object> login(Users_user users_user){
         HashMap<String,Object> resp = new HashMap<>();
-        Users_user insertuser= Users_userService.insert(users_user);
+        Users_user insertuser= users_usersService.insert(users_user);
         if (insertuser == ERR_CREATE_USERS){
             resp.put("status",false);
            // resp.put("errmsg","Server Error");
@@ -33,7 +32,7 @@ public class UserController {
     @RequestMapping(value = "/login")
     public HashMap<String,Object> register(Users_user users_user){
         HashMap<String,Object> resp = new HashMap<>();
-        Users_user selectuser= Users_userService.selectByPrimaryKey(users_user);
+        Users_user selectuser= users_usersService.selectByPrimaryKey(users_user);
         if (selectuser == ERR_CREATE_USERS){
             resp.put("status",false);
             resp.put("errmsg","Your account hasn't been registered yet");

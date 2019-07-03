@@ -1,61 +1,76 @@
 $(function () {
-    checkLogin();
-    logOut();
+
+    $("#email, #password").focus(restore);
+    $("#email").blur(checkEmail);
+    $("#password").blur(checkPassword);
+    $("#submit").click(checkAll);
 });
 
-function checkLogin() {
-    let $login = $('.header-login');
-    let $unLogin = $('.header-unlogin');
+function checkEmail() {
+    let flag;
+    let email = $("#email").val();
 
-    //存在用户信息，说明已经登陆
-    if (sessionStorage.user) {
-        $login.css({
-            display: ''
-        });
-        $unLogin.css({
-            display: 'none'
-        });
-        addTou();
-        checkAdmin();
+    if (email === "") {
+        setError("请输入邮箱！");
+        flag = false;
+    } else if (!email.match(/^([a-zA-Z0-9_-])+@([a-zA-Z0-9_-])+((\.[a-zA-Z0-9_-]{2,3}){1,2})$/)) {
+        setError("请输入合法邮箱！");
+        flag = false;
     } else {
-        $login.css({
-            display: 'none'
-        });
-        $unLogin.css({
-            display: ''
-        });
+        flag = true;
     }
+    return flag;
 }
 
-function logOut() {
-    $('#logout').click(function () {
-        sessionStorage.clear();
-    })
+//check whether pass is empty
+function checkPassword() {
+
+    let flag = true;
+
+    if ($("#password").val() === "") {
+        flag = false;
+        setError("请输入密码！");
+    }
+    return flag;
 }
 
+function checkAll() {
 
-function home() {
-    $("#user ul li:first a").on("click", function () {
-        let uid = JSON.parse(sessionStorage.user).id;
-        window.location.href = "html/home.html?id=" + uid;
+    if (!(checkEmail() && checkPassword())) {
         return false;
-    });
-}
-
-function checkAdmin() {
-    let status = JSON.parse(sessionStorage.user).status;
-    console.log(sessionStorage.user);
-
-    if (status !== 2) {
-        $(".admin").css({display: "none"});
     } else {
-        $(".admin").css({display: ""});
+        //ajax submit
+        let email = $("#email").val();
+        let password = $("#password").val();
+
+        $.ajax({
+            url: "http://localhost:8080/user/login",
+            dataType: "json",
+            async: true,
+            type: "post",
+            data: {
+                "username": email,
+                "password": password
+            },
+            success: function (res) {
+                if (res.status) {
+                    sessionStorage.user = JSON.stringify(res.data);
+                    window.location.href = "../index.html";
+                } else {
+                    setError(res.message);
+                }
+            }
+        });
     }
 }
 
-function search() {
-    $(".am-icon-search").on("click", function () {
-        let keyword = $(this).parent(".search").children("input").val();
-        if (keyword.trim()) window.location.href = "html/search.html?key=" + keyword;
-    })
+//clear error info
+function restore() {
+    $(".err").text("");
+}
+
+//set error info
+function setError(info) {
+    $(".err").text(info);
+    window.location.href = "html/404.html";
 }
