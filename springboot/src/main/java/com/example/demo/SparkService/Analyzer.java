@@ -1,4 +1,4 @@
-package net.spark;
+package com.example.demo.SparkService;
 
 
 import org.apache.spark.SparkConf;
@@ -8,7 +8,6 @@ import org.apache.spark.mllib.fpm.AssociationRules;
 import org.apache.spark.mllib.fpm.FPGrowth;
 import org.apache.spark.mllib.fpm.FPGrowthModel;
 import scala.Tuple3;
-
 
 import java.io.Serializable;
 import java.util.*;
@@ -60,7 +59,7 @@ public class Analyzer implements Serializable {
     }
 
 
-    public Analyzer(ArrayList<String> skillList,String preferedJob)
+    public Analyzer(ArrayList<String> skillList, String preferedJob)
     {
         this.skillList=skillList;
         this.preferedJob=preferedJob;
@@ -100,7 +99,6 @@ public class Analyzer implements Serializable {
 
         return recommendJobList.get(1).getKey();
     }
-
 
     private ArrayList<String> getRelativeSkillList(String recommendJob)
     {
