@@ -17,7 +17,7 @@ public class LogisticRegression {
     LogisticRegressionModel model;
     LogisticRegression()
     {
-        String path = "input/data.txt";
+        String path = "../data/input/data.txt";
         SparkConf sparkConf = new SparkConf().setAppName("Regression").setMaster("local");
         JavaSparkContext jsc = new JavaSparkContext(sparkConf);
         this.model = trainLogisticRegressionModel(jsc,path);
@@ -69,7 +69,7 @@ public class LogisticRegression {
     {
         String[] skills = {""};
         try {
-            BufferedReader in = new BufferedReader(new FileReader("input/skills.txt"));
+            BufferedReader in = new BufferedReader(new FileReader("../data/input/skills.txt"));
             skills = in.readLine().split(" ");
             in.close();
 
