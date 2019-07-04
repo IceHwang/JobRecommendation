@@ -64,7 +64,7 @@ function checkAll() {
                     if(adminflag){
                         window.location.href = "html/config.html";
                     } else
-                    window.location.href = "home.html";
+                    window.location.href = "html/recommend.html";
                 } else {
                     setError(res.errmsg);
                 }
