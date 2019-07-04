@@ -24,7 +24,7 @@ def main():
     #file.setUserDict('userDict.txt',['以太坊'])
 
     totalList=[]
-    totalList=totalList+transformTest("算法工程师_data.json","算法工程师")
+    #totalList=totalList+transformTest("算法工程师_data.json","算法工程师")
     totalList=totalList+transformTest("C_data.json","c/c++开发工程师")
     totalList = totalList + transformTest("Android_data.json", "Android开发工程师")
     totalList=totalList+transformTest("Hadoop_data.json","hadoop开发工程师")
@@ -43,14 +43,15 @@ def main():
     totalList = totalList + transformTest("图像处理_data.json", "图像处理算法工程师")
     totalList = totalList + transformTest("技术总监_data.json", "技术总监")
     totalList = totalList + transformTest("技术经理_data.json", "技术经理")
-    totalList = totalList + transformTest("机器学习_data.json", "机器学习算法工程师")
+    #totalList = totalList + transformTest("机器学习_data.json", "机器学习算法工程师")
     totalList = totalList + transformTest("机器视觉_data.json", "视觉算法工程师")
     totalList = totalList + transformTest("架构师_data.json", "架构师")
     totalList = totalList + transformTest("测试工程师_data.json", "测试工程师")
     totalList = totalList + transformTest("网络安全_data.json", "网络安全工程师")
     totalList = totalList + transformTest("网络工程师_data.json", "网络工程师")
     totalList = totalList + transformTest("自然语言处理_data.json", "自然语言处理工程师")
-    #totalList = totalList + transformTest("语音识别_data.json", "语音识别职位")
+    totalList = totalList + transformTest("c#_data.json", "c#开发工程师")
+    totalList = totalList + transformTest("嵌入式软件_data.json", "嵌入式软件开发工程师")
     totalList = totalList + transformTest("运维工程师_data.json", "运维工程师")
     totalList = totalList + transformTest("深度学习_data.json", "深度学习算法工程师")
 
@@ -58,8 +59,6 @@ def main():
     file.saveJsonList("test.txt",totalList)
     Word2Vector.word2Vec('../data/test.txt')
     return
-
-
 
 
 if __name__ == '__main__':
