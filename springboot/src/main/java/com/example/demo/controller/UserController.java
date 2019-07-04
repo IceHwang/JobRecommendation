@@ -4,7 +4,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.example.demo.SparkService.Analyzer;
 import com.example.demo.entity.Users_user;
 import com.example.demo.mapper.UserMapper;
-import com.example.demo.mapper.skillMapper;
+
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -19,10 +19,11 @@ public class UserController {
 
     @Autowired
     private UserMapper userMapper;
-    private skillMapper skillmapper;
+
     private final Users_user ERR_CREATE_USERS = null;
     private final String errmsg = "errmsg";
-    @RequestMapping(value = "/register")
+    @PostMapping(value = "/register")
+    @ResponseBody
     public HashMap<String,Object> register(Users_user users_user){
         HashMap<String,Object> resp = new HashMap<>();
         QueryWrapper<Users_user> queryWrapper = new QueryWrapper<>();
@@ -54,20 +55,36 @@ public class UserController {
     @PostMapping(value = "/login")
     @ResponseBody
     public HashMap<String,Object> login(Users_user users_user){
-        System.out.println(users_user.getEmail());
+        System.out.println(users_user.getPassword());
         HashMap<String,Object> resp = new HashMap<>();
+        QueryWrapper<Users_user> testAdmin= new QueryWrapper<>();
+        testAdmin.eq("email",users_user.getEmail()).eq("admin",1);
+        Users_user users_user1 = userMapper.selectOne(testAdmin);
+        if(users_user1 != null){
+            users_user.setAdmin(1);
+        }
         QueryWrapper<Users_user> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq("password",users_user.getPassword())
-                .eq("email",users_user.getEmail());
-        Users_user users_user1 = userMapper.selectOne(queryWrapper);
-        System.out.println(users_user.getEmail());
-        if (users_user1 !=ERR_CREATE_USERS){
-            resp.put("status",true);
-        }
-        else{
-            resp.put("status",true);
+        queryWrapper.eq("email",users_user.getEmail());
+        Users_user users_user2 = userMapper.selectOne(queryWrapper);
+        if(users_user2 == ERR_CREATE_USERS){
+            resp.put("status",false);
             resp.put("errmsg","Your account hasn't been registered yet");
+        }else{
+            queryWrapper.eq("password",users_user.getPassword());
+            users_user2 = userMapper.selectOne(queryWrapper);
+            if (users_user2 == ERR_CREATE_USERS){
+                resp.put("status",false);
+                resp.put("errmsg","Wrong Password");
+            }else
+            {
+                resp.put("status",true);
+                if (users_user.getAdmin() ==1){
+                    resp.put("admin",true);
+                }else
+                    resp.put("admin",false);
+            }
         }
+
         return resp;
     }
     @RequestMapping(value = "/recommend")

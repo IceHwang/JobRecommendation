@@ -5,4 +5,5 @@ import com.example.demo.entity.Users_user;
 import org.springframework.stereotype.Component;
 @Component
 public interface UserMapper extends BaseMapper<Users_user> {
+
 }

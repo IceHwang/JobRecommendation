@@ -55,16 +55,16 @@ function checkAll() {
             async: true,
             type: "post",
             data: {
-                "username": email,
+                "email": email,
                 "password": password
             },
             success: function (res) {
                 if (res.status) {
                     //sessionStorage.user = JSON.stringify(res.data);
-                    if(adminflag){
+                    if(res.admin){
                         window.location.href = "html/config.html";
                     } else
-                    window.location.href = "html/recommend.html";
+                    window.location.href = "../templates/recommend.html";
                 } else {
                     setError(res.errmsg);
                 }

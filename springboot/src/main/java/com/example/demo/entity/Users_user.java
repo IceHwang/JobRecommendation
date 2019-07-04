@@ -11,10 +11,11 @@ public class Users_user {
     private int id;
     private String password;
     private String email;
-
+    private int admin;
     public Users_user(String email,String password) {
         this.email = email;
         this.password = password;
+        this.admin=0;
     }
 
     public Users_user() {
@@ -40,5 +41,13 @@ public class Users_user {
 
     public void setPassword(String password) {
         this.password = password == null ? null : password.trim();
+    }
+
+    public int getAdmin() {
+        return admin;
+    }
+
+    public void setAdmin(int admin) {
+        this.admin = admin;
     }
 }
