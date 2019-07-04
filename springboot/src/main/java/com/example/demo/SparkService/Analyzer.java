@@ -203,8 +203,7 @@ public class Analyzer implements Serializable {
 
     public ArrayList<String> getRecommendedSkillList(String recommendJob)
     {
-        if(relativeSkillList==null)
-            relativeSkillList=this.getRelativeSkillList(recommendJob);
+        relativeSkillList=this.getRelativeSkillList(recommendJob);
         ArrayList<String> result=new ArrayList<>();
         for (int i = 0; i < relativeSkillList.size(); i++) {
             String skill=relativeSkillList.get(i);
@@ -220,8 +219,7 @@ public class Analyzer implements Serializable {
 
     public ArrayList<String> getCoreSkillList(String recommendJob)
     {
-        if(relativeSkillList==null)
-            relativeSkillList=this.getRelativeSkillList(recommendJob);
+        relativeSkillList=this.getRelativeSkillList(recommendJob);
         ArrayList<String> result=new ArrayList<>();
         for (int i = 0; i < relativeSkillList.size(); i++) {
             String skill=relativeSkillList.get(i);

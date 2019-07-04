@@ -9,6 +9,9 @@ import com.example.demo.mapper.skillMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.ui.Model;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.*;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -78,13 +81,33 @@ public class UserController {
     }
 
 
-//    //reconstruct model
-//    @RequestMapping(value = "/config")
-//    public HashMap<String,Object> config(Users_user users_user){
-//        HashMap<String,Object> resp = new HashMap<>();
-//
-//        return resp;
-//    }
-//
+
+
+    @ResponseBody
+    @RequestMapping(value = "/config")
+    public HashMap<String,Object> config(@RequestParam("file") MultipartFile inputFile) throws IOException {
+        HashMap<String,Object> resp = new HashMap<>();
+
+        if (inputFile==null||inputFile.getSize()==0)
+        {
+            resp.put("status",false);
+            return resp;
+        }
+
+        File outputFile = new File("../data/"+inputFile.getOriginalFilename());
+        inputFile.transferTo(outputFile);
+        // 读取文件第一行
+        BufferedReader bufferedReader = new BufferedReader(new FileReader(outputFile));
+        System.out.println(bufferedReader.readLine());
+        // 输出绝对路径
+        System.out.println(outputFile.getAbsolutePath());
+        bufferedReader.close();
+
+        resp.put("status",true);
+        return resp;
+
+
+    }
+
 
 }

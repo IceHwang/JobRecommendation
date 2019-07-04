@@ -1,5 +1,6 @@
 var id;
 var avatar;
+
 $(function () {
     checkLogin();
     var user = JSON.parse(sessionStorage.user);
@@ -9,6 +10,7 @@ $(function () {
     updateInfo(user);
 
 });
+
 $(document).ready(function () {
     $('#avatar').change(function () {
         var file = $('#avatar')[0].files[0];
@@ -17,32 +19,32 @@ $(document).ready(function () {
 });
 
 
-function updateInfo(user) {
-    $('#nickname').html(user.nickname);
-    updateGender(user.gender);
-    $('#input-show').val(user.description);
-    $('#input-work').val(user.workPlace);
-    $('#preview').attr('src', user.avatar);
-}
-
-/**
- * 更新gender信息
- */
-function updateGender(gender) {
-    if (gender == '男') {
-        $('#gender0').attr('checked', false);
-        $('#gender1').attr('checked', true);
-        $('#gender2').attr('checked', false);
-    } else if (gender == '女') {
-        $('#gender0').attr('checked', false);
-        $('#gender1').attr('checked', false);
-        $('#gender2').attr('checked', true);
-    } else if (gender == '保密') {
-        $('#gender0').attr('checked', true);
-        $('#gender1').attr('checked', false);
-        $('#gender2').attr('checked', false);
-    }
-}
+// function updateInfo(user) {
+//     $('#nickname').html(user.nickname);
+//     updateGender(user.gender);
+//     $('#input-show').val(user.description);
+//     $('#input-work').val(user.workPlace);
+//     $('#preview').attr('src', user.avatar);
+// }
+//
+// /**
+//  * 更新gender信息
+//  */
+// function updateGender(gender) {
+//     if (gender == '男') {
+//         $('#gender0').attr('checked', false);
+//         $('#gender1').attr('checked', true);
+//         $('#gender2').attr('checked', false);
+//     } else if (gender == '女') {
+//         $('#gender0').attr('checked', false);
+//         $('#gender1').attr('checked', false);
+//         $('#gender2').attr('checked', true);
+//     } else if (gender == '保密') {
+//         $('#gender0').attr('checked', true);
+//         $('#gender1').attr('checked', false);
+//         $('#gender2').attr('checked', false);
+//     }
+// }
 
 function upload(file) {
     var objUrl = getObjectURL(file);
@@ -51,7 +53,7 @@ function upload(file) {
     form.append('name', id);
     form.append('file', file);
     $.ajax({
-        url: 'http://localhost:8080/upload/avatar',
+        url: "/user/recommend",
         dataType: 'json',
         async: true,
         processData: false,
@@ -59,9 +61,10 @@ function upload(file) {
         type: 'POST',
         data: form,
         success: function (result) {
-            console.log(result.data);
+            console.log(result.status);
             if (result.status) {
-                avatar = result.data;
+                alert(result.status);
+
             }
         },
         error: function (xhr) {
@@ -83,28 +86,28 @@ function getObjectURL(file) {
     return url;
 }
 
-function update() {
-    $.ajax({
-        url: "http://localhost:8080/user",
-        dataType: "json",
-        async: true,
-        type: "put",
-        data: {
-            'id': id,
-            'avatar': avatar,
-            'gender': $("input[name='docInlineRadio'][checked]").val(),
-            'workPlace': $('#input-work').val(),
-            'description': $('#input-show').val()
-        },
-        success: function (res) {
-            if (res.status) {
-                sessionStorage.user = JSON.stringify(res.data);
-
-                $("#my-alert").modal({});
-            }
-        },
-        error: function (xhr) {
-            console.log(xhr);
-        }
-    });
-}
+// function update() {
+//     $.ajax({
+//         url: "http://localhost:8080/user",
+//         dataType: "json",
+//         async: true,
+//         type: "put",
+//         data: {
+//             'id': id,
+//             'avatar': avatar,
+//             'gender': $("input[name='docInlineRadio'][checked]").val(),
+//             'workPlace': $('#input-work').val(),
+//             'description': $('#input-show').val()
+//         },
+//         success: function (res) {
+//             if (res.status) {
+//                 sessionStorage.user = JSON.stringify(res.data);
+//
+//                 $("#my-alert").modal({});
+//             }
+//         },
+//         error: function (xhr) {
+//             console.log(xhr);
+//         }
+//     });
+// }
