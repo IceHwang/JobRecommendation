@@ -6,7 +6,6 @@ spring:
     driver-class-name: com.mysql.cj.jdbc.Driver
 
   thymeleaf:
-    prefix: classpath: /templates/
     check-template-location: true
     encoding: UTF-8
     suffix: .html
@@ -14,6 +13,7 @@ spring:
     cache: false
     servlet:
       content-type: text/html
+    prefix: /templates/
 
 
 
