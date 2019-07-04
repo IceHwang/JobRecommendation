@@ -5,7 +5,7 @@ $(function () {
     $("#password").blur(checkPassword);
     $("#submit").click(checkAll);
 });
-let adminflag;
+
 function checkEmail() {
     let flag;
     let email = $("#email").val();
@@ -16,14 +16,8 @@ function checkEmail() {
     } else if (!email.match(/^([a-zA-Z0-9_-])+@([a-zA-Z0-9_-])+((\.[a-zA-Z0-9_-]{2,3}){1,2})$/)) {
         setError("请输入合法邮箱！");
         flag = false;
-    }
-    else {
-        if (email === "admin@123.com"){
-            adminflag = true;
-            flag = true;
-        }else
-            flag =true;
-
+    } else {
+        flag = true;
     }
     return flag;
 }
@@ -50,23 +44,20 @@ function checkAll() {
         let password = $("#password").val();
 
         $.ajax({
-            url: "/user/login",
+            url: "http://localhost:8080/user/login",
             dataType: "json",
             async: true,
-            type: "post",
+            type: "get",
             data: {
                 "username": email,
                 "password": password
             },
             success: function (res) {
                 if (res.status) {
-                    //sessionStorage.user = JSON.stringify(res.data);
-                    if(adminflag){
-                        window.location.href = "html/config.html";
-                    } else
-                    window.location.href = "home.html";
+                    sessionStorage.user = JSON.stringify(res.data);
+                    window.location.href = "tables.html";
                 } else {
-                    setError(res.errmsg);
+                    setError(res.message);
                 }
             }
         });
@@ -81,4 +72,5 @@ function restore() {
 //set error info
 function setError(info) {
     $(".err").text(info);
+    window.location.href = "html/404.html";
 }

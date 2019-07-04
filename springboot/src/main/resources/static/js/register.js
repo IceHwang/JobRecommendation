@@ -1,28 +1,13 @@
 var time = 3;
 $(function () {
 
-    $("#email, #pass, #pass-ag").focus(restore);
+    $("#email, #password, #password-ag").focus(restore);
     $("#email").blur(checkEmail);
-    // $("#name").blur(checkName);
-    $("#pass").blur(checkPass);
-    $("#pass-ag").blur(checkPassAg);
+    $("#password").blur(checkPassword);
+    $("#password-ag").blur(checkPassAg());
     $("#submit").click(checkAll);
 
 });
-
-// function checkName() {
-//     var name = $("#name").val();
-//     var flag = true;
-//
-//     if (name === "") {
-//         setError("请输入用户名！");
-//         flag = false;
-//     } else if (name.length < 4 && name.length > 10) {
-//         setError("4~10个字符长度了解一下！");
-//         flag = false;
-//     }
-//     return flag;
-// }
 
 function checkEmail() {
     var flag = true;
@@ -39,11 +24,11 @@ function checkEmail() {
 }
 
 //check whether pass is empty
-function checkPass() {
+function checkPassword() {
 
     var flag = true;
 
-    if ($("#pass").val() === "") {
+    if ($("#password").val() === "") {
         flag = false;
         setError("请输入密码！");
     }
@@ -52,7 +37,7 @@ function checkPass() {
 
 function checkPassAg() {
     var flag = true;
-    if ($("#pass").val() !== $("#pass-ag").val()) {
+    if ($("#password").val() !== $("#password-ag").val()) {
         setError("两次输入的密码不一致！");
         flag = false;
     }
@@ -60,30 +45,29 @@ function checkPassAg() {
 }
 
 function checkAll() {
-    if ((!checkPass() && checkEmail() && checkPassAg())) {
+    if ((!checkPassword() && checkEmail() && checkPassAg())) {
         return false;
     }else {
-        //var nickname = $("#name").val();
         var email = $("#email").val();
-        var pass = $("#pass").val();
+        var password = $("#password").val();
 
 
 
         $.ajax({
-                url: "http://localhost:8080/user/register",
+                url: "/user/register",
                 dataType: "json",
                 async: true,
                 type: "post",//增 //get 查 pot 更新 //delete
                 data: {
                     "email":email,
-                    "password" :pass
+                    "password":password
                       },
                 success: function (res) {
                     if (res.status) {
                         okStyle();
                         regOk();
                     } else {
-                        setError(res.message);
+                        setError(res.errmsg);
                     }
                 },
             }
@@ -112,7 +96,7 @@ function okStyle() {
 function regOk() {
     setTimeout(regOk, 1000);
     if (time > 0) {
-        var info = "注册成功，" + time + "s后跳转登陆界面";
+        var info = "register succeed，" + time + "s后跳转登陆界面";
         setError(info);
         time--;
     } else {

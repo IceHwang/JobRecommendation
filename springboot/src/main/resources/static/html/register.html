@@ -1,12 +1,5 @@
-
-<!--
-Author: W3layouts
-Author URL: http://w3layouts.com
-License: Creative Commons Attribution 3.0 Unported
-License URL: http://creativecommons.org/licenses/by/3.0/
--->
 <!DOCTYPE html>
-<html>
+<html LANG="en" xmlns:th="http://www.thymeleaf.org">
 <head>
 <title>Register</title>
 
@@ -16,7 +9,7 @@ License URL: http://creativecommons.org/licenses/by/3.0/
 
 	
 	<script src="../js/jquery-3.3.1.min.js"></script>
-	<script src="../js/login.js"></script>
+	<script src="../js/register.js"></script>
 
 	<!-- Custom Theme files -->
 	<link href="../css/register.css" rel="stylesheet" type="text/css" media="all" />
@@ -46,17 +39,14 @@ License URL: http://creativecommons.org/licenses/by/3.0/
 					</div>
 					<div class="icon1">
 						<span class="fa fa-lock"></span>
-						<input type="password" placeholder="Password" id="pass" required=""/><br>
+						<input type="password" placeholder="Password" id="password" required=""/><br>
 					</div>
 					<div class="icon1">
 						<span class="fa fa-lock"></span>
-						<input type="password" placeholder="Repeat Password" id="pass-og" required=""/><br>
+						<input type="password" placeholder="Repeat Password" id="password-ag" required=""/><br>
 					</div>
-<!--					<div class="login-check">-->
-<!--						 <label class="checkbox"><input type="checkbox" name="checkbox" checked=""><i> </i> &#45;&#45;</label>-->
-<!--					</div>-->
 					<div class="bottom">
-						<button class="submit">Register</button>
+						<button class="submit" id="submit">Register</button>
 					</div>
 					<div class="links">
 						<p class="right"><a href="../index.html">Registered? Log In</a></p>
