@@ -65,6 +65,7 @@ function checkAll() {
                         window.location.href = "html/config.html";
                     } else
                     window.location.href = "../templates/recommend.html";
+
                 } else {
                     setError(res.errmsg);
                 }

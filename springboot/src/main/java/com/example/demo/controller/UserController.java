@@ -19,12 +19,12 @@ public class UserController {
 
     @Autowired
     private UserMapper userMapper;
-
     private final Users_user ERR_CREATE_USERS = null;
     private final String errmsg = "errmsg";
+
     @PostMapping(value = "/register")
-    @ResponseBody
     public HashMap<String,Object> register(Users_user users_user){
+        System.out.println(users_user.getPassword());
         HashMap<String,Object> resp = new HashMap<>();
         QueryWrapper<Users_user> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("email",users_user.getEmail());

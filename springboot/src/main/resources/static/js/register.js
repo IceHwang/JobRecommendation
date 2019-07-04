@@ -1,10 +1,10 @@
-var time = 3;
+//var time = 3;
 $(function () {
 
-    $("#email, #password, #password-ag").focus(restore);
+    $("#email, #pass, #pass-ag").focus(restore);
     $("#email").blur(checkEmail);
-    $("#password").blur(checkPassword);
-    $("#password-ag").blur(checkPassAg());
+    $("#pass").blur(checkPass);
+    $("#pass-ag").blur(checkPassAg());
     $("#submit").click(checkAll);
 
 });
@@ -12,7 +12,6 @@ $(function () {
 function checkEmail() {
     var flag = true;
     var email = $("#email").val();
-
     if (email === "") {
         setError("请输入邮箱！");
         flag = false;
@@ -24,11 +23,11 @@ function checkEmail() {
 }
 
 //check whether pass is empty
-function checkPassword() {
+function checkPass() {
 
     var flag = true;
 
-    if ($("#password").val() === "") {
+    if ($("#pass").val() === "") {
         flag = false;
         setError("请输入密码！");
     }
@@ -37,7 +36,7 @@ function checkPassword() {
 
 function checkPassAg() {
     var flag = true;
-    if ($("#password").val() !== $("#password-ag").val()) {
+    if ($("#pass").val() !== $("#pass-ag").val()) {
         setError("两次输入的密码不一致！");
         flag = false;
     }
@@ -45,14 +44,14 @@ function checkPassAg() {
 }
 
 function checkAll() {
-    if ((!checkPassword() && checkEmail() && checkPassAg())) {
+    //console.log("123");
+    if ((!checkPass() && checkEmail() && checkPassAg())) {
         return false;
     }else {
         var email = $("#email").val();
-        var password = $("#password").val();
-
-
-
+        var pass = $("#pass").val();
+        console.log(email)
+        console.log(pass)
         $.ajax({
                 url: "/user/register",
                 dataType: "json",
@@ -60,7 +59,7 @@ function checkAll() {
                 type: "post",//增 //get 查 pot 更新 //delete
                 data: {
                     "email":email,
-                    "password":password
+                    "password":pass
                       },
                 success: function (res) {
                     if (res.status) {
