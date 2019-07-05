@@ -109,34 +109,7 @@ public class UserController {
         return resp;
     }
 
-    @RequestMapping(value = "/get_recommend")
-    @ResponseBody
-    public HashMap<String,Object> get_recommend(HashMap<String,Object> hashMap,HttpServletRequest request){
-        HttpSession session=request.getSession();
-        Object object=session.getAttribute("email");
-        String emaill=(String) object;
-        if (emaill==null)
-            return null;
-        else
-        {
-//            Analyzer analyzer = new Analyzer(hashMap);
-//            return analyzer.getResultHashMap();
 
-            return Analyzer.getTestResultHashMap();
-        }
-
-    }
-
-    @RequestMapping(value = "/recommend")
-    public String recommend(HttpServletRequest request){
-        HttpSession session=request.getSession();
-        Object object=session.getAttribute("email");
-        String emaill=(String) object;
-        if (emaill==null)
-            return "error";
-        else
-            return "recommend";
-    }
 
     @RequestMapping(value = "/config")
     public String config(HttpServletRequest request){
@@ -200,6 +173,94 @@ public class UserController {
         
    }
 
+    @RequestMapping(value = "/userhome")
+    public String userhome(HttpServletRequest request){
+        HttpSession session=request.getSession();
+        Object object=session.getAttribute("email");
+        String emaill=(String) object;
+        if (emaill==null)
+            return "error";
+        else
+            return "userhome";
+    }
+
+
+    @ResponseBody
+    @RequestMapping(value = "/get_info")
+    public HashMap<String,Object> get_info(HttpServletRequest request)
+    {
+        HashMap<String,Object> resp = new HashMap<>();
+        HttpSession session=request.getSession();
+        Object object=session.getAttribute("email");
+        String emaill=(String) object;
+        if (emaill==null)
+        {
+            resp.put("status",false);
+            return resp;
+        }
+        resp.put("status",true);
+        resp.put("jobs",Analyzer.getJobList().toArray());
+        resp.put("skills",Analyzer.getSkillList().toArray());
+
+        return resp;
+
+
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "/choose")
+    public HashMap<String,Object> choose(HashMap<String,Object> hashMap,HttpServletRequest request)
+    {
+        HashMap<String,Object> resp = new HashMap<>();
+        HttpSession session=request.getSession();
+        Object object=session.getAttribute("email");
+        String emaill=(String) object;
+        if (emaill==null)
+        {
+            resp.put("status",false);
+            return resp;
+        }
+
+        session.setAttribute("hashMap",hashMap);
+        resp.put("status",true);
+        return resp;
+
+
+    }
+
+
+    @RequestMapping(value = "/recommend")
+    public String recommend(HttpServletRequest request){
+        HttpSession session=request.getSession();
+        Object object=session.getAttribute("email");
+        String emaill=(String) object;
+        if (emaill==null)
+            return "error";
+        else
+            return "recommend";
+    }
+
+    @RequestMapping(value = "/get_recommend")
+    @ResponseBody
+    public HashMap<String,Object> get_recommend(HttpServletRequest request){
+        HttpSession session=request.getSession();
+        Object object=session.getAttribute("email");
+        String emaill=(String) object;
+        if (emaill==null)
+            return null;
+        else
+        {
+            object=session.getAttribute("hashMap");
+            HashMap<String,Object> hashMap=(HashMap<String,Object>) object;
+//            if (hashMap==null)
+//                return null;
+//            Analyzer analyzer = new Analyzer(hashMap);
+//            return analyzer.getResultHashMap();
+
+            return Analyzer.getTestResultHashMap();
+        }
+
+    }
 
 
 }

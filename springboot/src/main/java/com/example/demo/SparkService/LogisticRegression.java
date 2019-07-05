@@ -22,15 +22,17 @@ public class LogisticRegression {
     {
         System.setProperty("hadoop.home.dir","C:\\winutils");
         String path = "../data/VectorData/vectorData.txt";
-        SparkConf sparkConf = new SparkConf().setAppName("Regression").setMaster("local");
-        JavaSparkContext jsc = new JavaSparkContext(sparkConf);
+        SparkConf sparkConf = new SparkConf().setAppName("LogisticRegression").setMaster("local");
+        JavaSparkContext sc = new JavaSparkContext(sparkConf);
         try{
-            this.model = LoadModel(jsc,"../data/mod");
+            this.model = LoadModel(sc,"../data/mod");
         }
         catch(Exception e){
-            this.model = trainLogisticRegressionModel(jsc,path);
-            SaveModel(model,jsc,"../data/mod");
+            System.out.println(e.toString());
+            this.model = trainLogisticRegressionModel(sc,path);
+            SaveModel(model,sc,"../data/mod");
         }
+        sc.stop();
     }
     public ArrayList<Map.Entry<String,Double>> getPredictedJobWithScore(ArrayList<String> skillList)
     {
