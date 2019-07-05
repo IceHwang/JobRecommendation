@@ -78,9 +78,19 @@ class FileIO():
             for lines in f.readlines():
                 wordList.append(lines)
         return wordList
+
     def setSkillLine(self,filename,skills):
         with open(self.dpath+filename, 'w', encoding='utf-8') as f:
             f.write(skills)
+
+    def getJobList(self,filename):
+        jobList = []
+        with open(self.dpath+filename,'r',encoding='utf-8') as f:
+            for line in f.readlines():
+                line = line.split(' ')
+                if line[0] not in jobList:
+                    jobList.append(line[0])
+        return jobList
 
 
 
