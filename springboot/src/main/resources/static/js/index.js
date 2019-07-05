@@ -65,7 +65,7 @@ function checkAll() {
                         window.location.href = "user/config";
 
                     } else
-                        window.location.href = "user/recommend";
+                        window.location.href = "user/userhome";
 
                 } else {
                     setError(res.errmsg);
