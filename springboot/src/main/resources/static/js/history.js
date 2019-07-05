@@ -2,31 +2,31 @@
 $(function () {
     tableGenerater(null,null,null,null);
 
-    // $.ajax({
-    //         url: "/user/history",
-    //         dataType: "json",
-    //         async: true,
-    //         type: "post",//增 //get 查 pot 更新 //delete
-    //         data: {
-    //         },
-    //         success: function (res) {
-    //             var times = [];
-    //             var jobs = [];
-    //             var recommendSkills = [];
-    //             var coreSkills = [];
-    //
-    //             for (var i = 0; i < res.times.length; i++) {
-    //
-    //                 times.push(res.times[i]);
-    //                 jobs.push(res.jobs[i]);
-    //                 recommendSkills.push(res.recommendSkills[i]);
-    //                 coreSkills.push(res.coreSkills[i]);
-    //
-    //             }
-    //             tableGenerater(times,jobs,recommendSkills,coreSkills);
-    //         },
-    //     }
-    // );
+    $.ajax({
+            url: "/user/history",
+            dataType: "json",
+            async: true,
+            type: "post",//增 //get 查 pot 更新 //delete
+            data: {
+            },
+            success: function (res) {
+                var times = [];
+                var jobs = [];
+                var recommendSkills = [];
+                var coreSkills = [];
+
+                for (var i = 0; i < res.times.length; i++) {
+
+                    times.push(res.times[i]);
+                    jobs.push(res.jobs[i]);
+                    recommendSkills.push(res.recommendSkills[i]);
+                    coreSkills.push(res.coreSkills[i]);
+
+                }
+                tableGenerater(times,jobs,recommendSkills,coreSkills);
+            },
+        }
+    );
 
 });
 

@@ -6,7 +6,7 @@ $(function () {
 
 
     $.ajax({
-            url: "/user/recommend",
+            url: "/user/get_recommend",
             dataType: "json",
             async: true,
             type: "post",//增 //get 查 pot 更新 //delete

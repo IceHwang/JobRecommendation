@@ -20,14 +20,21 @@ public class LogisticRegression {
     LogisticRegressionModel model;
     LogisticRegression()
     {
-        String path = "../data/input/data.txt";
+        System.setProperty("hadoop.home.dir","C:\\winutils");
+        String path = "../data/VectorData/vectorData.txt";
         SparkConf sparkConf = new SparkConf().setAppName("Regression").setMaster("local");
         JavaSparkContext jsc = new JavaSparkContext(sparkConf);
-        this.model = trainLogisticRegressionModel(jsc,path);
+        try{
+            this.model = LoadModel(jsc,"../data/mod");
+        }
+        catch(Exception e){
+            this.model = trainLogisticRegressionModel(jsc,path);
+            SaveModel(model,jsc,"../data/mod");
+        }
     }
     public ArrayList<Map.Entry<String,Double>> getPredictedJobWithScore(ArrayList<String> skillList)
     {
-        String jobs = "c/c++开发工程师 android开发工程师 hadoop开发工程师 java开发工程师 php开发工程师 数据库管理员 flash动画师 html5开发工程师 ios开发工程师 python开发工程师 u3d开发工程师 区块链工程师 图像处理算法工程师 技术总监 技术经理 视觉算法工程师 架构师 测试工程师 网络安全工程师 网络工程师 自然语言处理工程师 c#开发工程师 嵌入式软件开发工程师 运维工程师 深度学习算法工程师";
+        String jobs = "android开发工程师 c#开发工程师 c/c++开发工程师 数据库管理员 flash动画师 hadoop开发工程师 html5开发工程师 ios开发工程师 java开发工程师 php开发工程师 python开发工程师 u3d开发工程师 区块链工程师 图像处理算法工程师 嵌入式软件开发工程师 技术总监 技术经理 视觉算法工程师 架构师 测试工程师 深度学习算法工程师 网络安全工程师 网络工程师 自然语言处理工程师 运维工程师";
         String[] job = jobs.split(" ");
         ArrayList<Double> confidenceScore = (getConfidenceScore(this.model,word2Vec(skillList)));
         HashMap<String,Double> jobWithScore = new HashMap<String,Double>();
@@ -72,7 +79,7 @@ public class LogisticRegression {
     {
         String[] skills = {""};
         try {
-            BufferedReader in = new BufferedReader(new FileReader("../data/input/skills.txt"));
+            BufferedReader in = new BufferedReader(new FileReader("../data/VectorData/skills.txt"));
             skills = in.readLine().split(" ");
             in.close();
 

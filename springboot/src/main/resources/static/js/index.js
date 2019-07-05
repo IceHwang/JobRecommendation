@@ -62,9 +62,10 @@ function checkAll() {
                 if (res.status) {
                     //sessionStorage.user = JSON.stringify(res.data);
                     if(res.admin){
-                        window.location.href = "html/config.html";
+                        window.location.href = "user/config";
+
                     } else
-                    window.location.href = "../templates/recommend.html";
+                        window.location.href = "user/recommend";
 
                 } else {
                     setError(res.errmsg);
