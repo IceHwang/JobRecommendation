@@ -10,7 +10,7 @@ import org.apache.spark.mllib.fpm.FPGrowth;
 import org.apache.spark.mllib.fpm.FPGrowthModel;
 import scala.Tuple3;
 
-import java.io.Serializable;
+import java.io.*;
 import java.util.*;
 
 public class Analyzer implements Serializable {
@@ -31,7 +31,7 @@ public class Analyzer implements Serializable {
 
 //        getSkillList().forEach(System.out::println);
 
-
+        saveSelectModelPath("2019_0705_2012");
         String[] skillArray={"tensorflow","ajax","docker","html","javascript","mysql","java","sql","c++","tomcat","spring","svm"};
         ArrayList<String> list = arrayToStringArrayList(skillArray);
 
@@ -65,14 +65,41 @@ public class Analyzer implements Serializable {
 //        logisticRegression=new LogisticRegression();
     }
 
+    public ArrayList<String> getModelPath()
+    {
+        return LogisticRegression.getModelConfig();
+    }
+
+    public static void saveSelectModelPath(String dpath)
+    {
+        try{
+            BufferedWriter w = new BufferedWriter(new FileWriter("../data/SelectedModel.txt"));
+            w.write(dpath);
+            w.close();
+        }
+        catch(IOException e){
+
+        }
+    }
+    public static String getSelectedModelPath()
+    {
+        return LogisticRegression.getSelectedModel();
+    }
     public Analyzer(ArrayList<String> skillList, String preferedJob)
     {
         this.skillList=skillList;
         this.preferedJob=preferedJob;
-        createModel();
         if (logisticRegression==null)
             logisticRegression=new LogisticRegression();
+        createModel();
     }
+
+    public static void creatNewModel(ArrayList<String> newData)
+    {
+       LogisticRegression m = new LogisticRegression(newData);
+    }
+
+
 
     public Analyzer(HashMap<String,Object> hashMap)
     {
@@ -329,7 +356,7 @@ public class Analyzer implements Serializable {
         System.setProperty("hadoop.home.dir","C:\\winutils");
         if(model!=null)
             return;
-        String inputFile = "../data/CleanData/data.txt";
+        String inputFile = "../data/"+logisticRegression.getModelPath()+"/cleanData/data.txt";
         double minSupport=0.003;
         int numPartition=-1;
 
