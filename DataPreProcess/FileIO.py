@@ -1,6 +1,3 @@
-import jieba.analyse
-import json
-import jieba.posseg
 class FileIO():
     def __init__(self,dpath):
         self.dpath = dpath
@@ -58,7 +55,7 @@ class FileIO():
                 f.write('\n')
 
     def setUserDict(self, filename, dictList):
-        with open(self.dpath+filename,'w',encoding='utf-8') as f:
+        with open(self.dpath+filename, 'w', encoding='utf-8') as f:
             for i in dictList:
                 f.write(i)
                 f.write('\n')
@@ -69,6 +66,23 @@ class FileIO():
             for line in f.readlines():
                 words = words + line
         return words.split('\n')[:-1]
+
+    def setVectorList(self, filename, VectorList):
+        with open(self.dpath+filename, 'w', encoding='utf-8') as f:
+            for vector in VectorList:
+                f.write(vector+'\n')
+
+    def getWordList(self, filename):
+        wordList = []
+        with open(self.dpath+filename, 'r', encoding='utf-8') as f:
+            for lines in f.readlines():
+                wordList.append(lines)
+        return wordList
+    def setSkillLine(self,filename,skills):
+        with open(self.dpath+filename, 'w', encoding='utf-8') as f:
+            f.write(skills)
+
+
 
 
 
