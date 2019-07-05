@@ -15,7 +15,7 @@ public class Users_user {
     public Users_user(String email,String password) {
         this.email = email;
         this.password = password;
-        this.admin=0;
+        this.admin = 0;
     }
 
     public Users_user() {
