@@ -69,8 +69,8 @@ public class Analyzer implements Serializable {
         this.skillList=skillList;
         this.preferedJob=preferedJob;
         createModel();
-//        if (logisticRegression==null)
-//            logisticRegression=new LogisticRegression();
+        if (logisticRegression==null)
+            logisticRegression=new LogisticRegression();
     }
 
     public Analyzer(HashMap<String,Object> hashMap)
@@ -80,8 +80,8 @@ public class Analyzer implements Serializable {
         this.skillList=arrayToStringArrayList(skillArray);
         this.preferedJob=preferedJob;
         createModel();
-//        if (logisticRegression==null)
-//            logisticRegression=new LogisticRegression();
+        if (logisticRegression==null)
+            logisticRegression=new LogisticRegression();
     }
 
     public static Object[] arrayListToArray(ArrayList<String> arrayList)
@@ -105,11 +105,11 @@ public class Analyzer implements Serializable {
         String[] jobs=new String[3];
         ArrayList<Object[]> recommendSkillLists=new ArrayList<>();
         ArrayList<Object[]> coreSkillLists=new ArrayList<>();
-//        ArrayList<Map.Entry<String,Double>> regressionResult=getRecommendedJobList_Logistic();
+        ArrayList<Map.Entry<String,Double>> regressionResult=getRecommendedJobList_Logistic();
 
         for (int i = 0; i < 3; i++) {
-//            String recommendJob = regressionResult.get(i).getKey();
-            String recommendJob=this.getRecommendedJob(i);
+            String recommendJob = regressionResult.get(i).getKey();
+//            String recommendJob=this.getRecommendedJob(i);
             jobs[i]=recommendJob;
             ArrayList<String> recommendSkillList=this.getRecommendedSkillList(recommendJob);
             ArrayList<String> coreSkillList=this.getCoreSkillList(recommendJob);

@@ -53,7 +53,7 @@ function upload(file) {
     form.append('name', id);
     form.append('file', file);
     $.ajax({
-        url: "/user/recommend",
+        url: "/user/upload",
         dataType: 'json',
         async: true,
         processData: false,

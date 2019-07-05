@@ -7,16 +7,19 @@ import com.example.demo.mapper.UserMapper;
 
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.ui.Model;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 import java.io.*;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-@RestController// return jason data
+@Controller// return jason data
 @RequestMapping("/user")
 public class UserController {
 
@@ -26,6 +29,7 @@ public class UserController {
     private final String errmsg = "errmsg";
 
     @PostMapping(value = "/register")
+    @ResponseBody
     public HashMap<String,Object> register(Users_user users_user){
         System.out.println(users_user.getPassword());
         HashMap<String,Object> resp = new HashMap<>();
@@ -57,7 +61,7 @@ public class UserController {
     }
     @PostMapping(value = "/login")
     @ResponseBody
-    public HashMap<String,Object> login(Users_user users_user){
+    public HashMap<String,Object> login(Users_user users_user, HttpServletRequest request){
         System.out.println(users_user.getPassword());
         HashMap<String,Object> resp = new HashMap<>();
         QueryWrapper<Users_user> testAdmin= new QueryWrapper<>();
@@ -81,28 +85,79 @@ public class UserController {
             }else
             {
                 resp.put("status",true);
-                if (users_user.getAdmin() ==1){
+                HttpSession session=request.getSession();
+                session.setAttribute("email",users_user.getEmail());
+                session.setAttribute("password",users_user.getPassword());
+                if (users_user.getAdmin() ==1)
+                {
+                    session.setAttribute("admin","1");
                     resp.put("admin",true);
+
                 }else
+                {
+                    session.setAttribute("admin","0");
                     resp.put("admin",false);
+                }
             }
         }
 
         return resp;
     }
+
+    @RequestMapping(value = "/get_recommend")
+    @ResponseBody
+    public HashMap<String,Object> get_recommend(HashMap<String,Object> hashMap,HttpServletRequest request){
+        HttpSession session=request.getSession();
+        Object object=session.getAttribute("email");
+        String emaill=(String) object;
+        if (emaill==null)
+            return null;
+        else
+        {
+//            Analyzer analyzer = new Analyzer(hashMap);
+//            return analyzer.getResultHashMap();
+
+            return Analyzer.getTestResultHashMap();
+        }
+
+    }
+
     @RequestMapping(value = "/recommend")
-    public HashMap<String,Object> recommend(HashMap<String,Object> hashMap){
-//        Analyzer analyzer = new Analyzer(hashMap);
-//        return analyzer.getResultHashMap();
-        return Analyzer.getTestResultHashMap();
+    public String recommend(HttpServletRequest request){
+        HttpSession session=request.getSession();
+        Object object=session.getAttribute("email");
+        String emaill=(String) object;
+        if (emaill==null)
+            return "error";
+        else
+            return "recommend";
+    }
+
+    @RequestMapping(value = "/config")
+    public String config(HttpServletRequest request){
+        HttpSession session=request.getSession();
+        Object object=session.getAttribute("admin");
+        String admin=(String) object;
+        if (admin==null)
+            return null;
+        else if(!admin.equals("1"))
+            return null;
+        else
+            return "config";
     }
 
 
-
-
     @ResponseBody
-    @RequestMapping(value = "/config")
-    public HashMap<String,Object> config(@RequestParam("file") MultipartFile inputFile) throws IOException {
+    @RequestMapping(value = "/upload")
+    public HashMap<String,Object> upload(@RequestParam("file") MultipartFile inputFile,HttpServletRequest request) throws IOException {
+        HttpSession session=request.getSession();
+        Object object=session.getAttribute("admin");
+        String admin=(String) object;
+        if (admin==null)
+            return null;
+        else if(!admin.equals("1"))
+            return null;
+
         HashMap<String,Object> resp = new HashMap<>();
 
         if (inputFile==null||inputFile.getSize()==0)
@@ -125,6 +180,7 @@ public class UserController {
 
 
     }
+
 
 
 }
