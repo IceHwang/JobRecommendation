@@ -31,6 +31,7 @@ public class Analyzer implements Serializable {
 
 //        getSkillList().forEach(System.out::println);
 
+
         String[] skillArray={"tensorflow","ajax","docker","html","javascript","mysql","java","sql","c++","tomcat","spring","svm"};
         ArrayList<String> list = arrayToStringArrayList(skillArray);
 
@@ -50,7 +51,7 @@ public class Analyzer implements Serializable {
         String[] skillArray={"tensorflow","pytorch","python","html","javascript","mysql","java","sql","c++","tomcat","cnn","svm"};
         ArrayList<String> list = arrayToStringArrayList(skillArray);
 
-        Analyzer analyzer = new Analyzer(list,"机器学习算法工程师");
+        Analyzer analyzer = new Analyzer(list,"");
         HashMap<String,Object> hashMap=analyzer.getResultHashMap();
 
 //        JSONObject object = new JSONObject(hashMap);
@@ -266,6 +267,29 @@ public class Analyzer implements Serializable {
         return new ArrayList<String>(hashMap.keySet());
     }
 
+    public static ArrayList<String> getJobList()
+    {
+        if(model==null)
+            Analyzer.createModel();
+        HashMap<String,Integer> hashMap=new HashMap<>();
+        model.forEach(x->{
+            if(!x.javaConsequent().toString().contains("职位"))
+                return;
+            String job=x.javaConsequent().get(0);
+            hashMap.put(job,1);
+
+
+        });
+        List<HashMap.Entry<String, Integer>> jobList = new ArrayList<Map.Entry<String, Integer>>(hashMap.entrySet());
+        Collections.sort(jobList, new Comparator<Map.Entry<String, Integer>>() {
+
+            public int compare(Map.Entry<String, Integer> o1, Map.Entry<String, Integer> o2) {
+                return o2.getValue().compareTo(o1.getValue());
+            }
+        });
+        return new ArrayList<String>(hashMap.keySet());
+    }
+
     private void transformSkillsToJobs(String skill, HashMap<String, Double> jobMap) {
         model.forEach(x->{
             if(!x.javaConsequent().toString().contains("职位"))
@@ -302,13 +326,14 @@ public class Analyzer implements Serializable {
 
     public static void createModel()
     {
+        System.setProperty("hadoop.home.dir","C:\\winutils");
         if(model!=null)
             return;
         String inputFile = "../data/CleanData/data.txt";
         double minSupport=0.003;
         int numPartition=-1;
 
-        SparkConf sparkConf= new SparkConf().setAppName("FPTreeAnalyzer");
+        SparkConf sparkConf= new SparkConf().setAppName("Analyzer");
         sparkConf.setMaster("local");
         JavaSparkContext sc = new JavaSparkContext(sparkConf);
 
@@ -326,21 +351,12 @@ public class Analyzer implements Serializable {
                 .run(transactions);
 
 
-//        ArrayList<String> list= new ArrayList<>();
-//        for(FPGrowth.FreqItemset<String> s: model.freqItemsets().toJavaRDD().collect())
-//        {
-//            list.add("["+ Joiner.on(",").join(s.javaItems())+"]");
-//        }
 
         ArrayList<Tuple3<String,String,Double>> list= new ArrayList<>();
         AssociationRules arules = new AssociationRules()
                 .setMinConfidence(0.15);
         JavaRDD<AssociationRules.Rule<String>> results = arules.run(FPTreemodel.freqItemsets().toJavaRDD());
 
-//        for (AssociationRules.Rule<String> rule : results.collect()) {
-//            list.add(
-//                    new Tuple3(rule.javaAntecedent().toString(),rule.javaConsequent().toString(),rule.confidence()));
-//        }
 
         List<AssociationRules.Rule<String>> result=results.collect();
         sc.stop();
