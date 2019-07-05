@@ -304,7 +304,7 @@ public class Analyzer implements Serializable {
     {
         if(model!=null)
             return;
-        String inputFile = "../data/test.txt";
+        String inputFile = "../data/CleanData/data.txt";
         double minSupport=0.003;
         int numPartition=-1;
 
