@@ -34,6 +34,7 @@ public class LogisticRegression {
         this.modelPath = getSelectedModel();
         String path = "../data/"+this.modelPath+"/VectorData/vectorData.txt";
         SparkConf sparkConf = new SparkConf().setAppName("LogisticRegression").setMaster("local");
+        sparkConf.set("spark.driver.allowMultipleContexts","true");
         JavaSparkContext sc = new JavaSparkContext(sparkConf);
         try{
             this.model = LoadModel(sc,"../data/"+this.modelPath+"/mod/RegressionModel");
@@ -75,14 +76,15 @@ public class LogisticRegression {
         this.saveVector(newData);
         String path = "../data/"+this.modelPath+"/VectorData/vectorData.txt";
         SparkConf sparkConf = new SparkConf().setAppName("LogisticRegression").setMaster("local");
+        sparkConf.set("spark.driver.allowMultipleContexts","true");
         JavaSparkContext sc = new JavaSparkContext(sparkConf);
         try{
-            this.model = LoadModel(sc,"../data/"+this.modelPath+"/mod");
+            this.model = LoadModel(sc,"../data/"+this.modelPath+"/mod/RegressionModel");
         }
         catch(Exception e){
             System.out.println(e.toString());
             this.model = trainLogisticRegressionModel(sc,path);
-            SaveModel(model,sc,"../data/"+this.modelPath+"/mod");
+            SaveModel(model,sc,"../data/"+this.modelPath+"/mod/RegressionModel");
         }
         sc.stop();
     }

@@ -34,7 +34,7 @@ public class Analyzer implements Serializable {
         saveSelectModelPath("2019_0705_1601");
         String[] skillArray={"tensorflow","ajax","docker","html","javascript","mysql","java","sql","c++","tomcat","spring","svm"};
         ArrayList<String> list = arrayToStringArrayList(skillArray);
-
+        Analyzer.getJobList();
         Analyzer analyzer = new Analyzer(list,"机器学习算法工程师");
         HashMap<String,Object> hashMap=analyzer.getResultHashMap();
 
@@ -62,7 +62,7 @@ public class Analyzer implements Serializable {
     public static void init()
     {
         createModel();
-        logisticRegression=new LogisticRegression();
+//        logisticRegression=new LogisticRegression();
     }
 
     public static ArrayList<String> getModelPath()
@@ -103,11 +103,13 @@ public class Analyzer implements Serializable {
 
     public Analyzer(HashMap<String,Object> hashMap)
     {
-        this.skillList=(ArrayList<String>) (hashMap.get("skillList"));
-        this.preferedJob=(String) (hashMap.get("preferedJob"));
-        createModel();
         if (logisticRegression==null)
             logisticRegression=new LogisticRegression();
+        createModel();
+        String preferedJob=(String) (hashMap.get("preferedJob"));
+        ArrayList<String> skillList= (ArrayList<String>) (hashMap.get("skillList"));
+        this.skillList=skillList;
+        this.preferedJob=preferedJob;
     }
 
     public static Object[] arrayListToArray(ArrayList<String> arrayList)
@@ -294,6 +296,8 @@ public class Analyzer implements Serializable {
 
     public static ArrayList<String> getJobList()
     {
+        if (logisticRegression==null)
+            logisticRegression=new LogisticRegression();
         if(model==null)
             Analyzer.createModel();
         HashMap<String,Integer> hashMap=new HashMap<>();
@@ -353,50 +357,48 @@ public class Analyzer implements Serializable {
     {
         System.setProperty("hadoop.home.dir","C:\\winutils");
         SparkConf sparkConf= new SparkConf().setAppName("Analyzer");
+        sparkConf.set("spark.driver.allowMultipleContexts","true");
         sparkConf.setMaster("local");
         JavaSparkContext sc = new JavaSparkContext(sparkConf);
         FPGrowthModel FPTreemodel;
         if(model!=null)
             return;
-        if (logisticRegression==null)
-            logisticRegression=new LogisticRegression();
-        try{
-            FPTreemodel=FPGrowthModel.load(sc.sc(),"../data/"+logisticRegression.getModelPath()+"/mod/FPTreeModel");
+        else {
+            try {
+                FPTreemodel = FPGrowthModel.load(sc.sc(), "../data/" + logisticRegression.getModelPath() + "/mod/FPTreeModel");
 
+            } catch (Exception e) {
+                String inputFile = "../data/" + logisticRegression.getModelPath() + "/cleanData/data.txt";
+                double minSupport = 0.003;
+                int numPartition = -1;
+
+
+                JavaRDD<List<String>> transactions = sc.textFile(inputFile)
+                        .map(s -> Arrays.asList(s.split(" ")))
+                        .map(x -> {
+                            x.set(0, x.get(0) + "职位");
+                            return x;
+                        })
+                        .filter(s -> s.size() > 2);
+
+
+                FPTreemodel = new FPGrowth()
+                        .setMinSupport(minSupport)
+                        .run(transactions);
+                FPTreemodel.save(sc.sc(), "../data/" + logisticRegression.getModelPath() + "/mod/FPTreeModel");
+            }
+
+
+            ArrayList<Tuple3<String, String, Double>> list = new ArrayList<>();
+            AssociationRules arules = new AssociationRules()
+                    .setMinConfidence(0.15);
+            JavaRDD<AssociationRules.Rule<String>> results = arules.run(FPTreemodel.freqItemsets().toJavaRDD());
+
+
+            List<AssociationRules.Rule<String>> result = results.collect();
+            sc.stop();
+            model = result;
+            return;
         }
-        catch (Exception e){
-            String inputFile = "../data/"+logisticRegression.getModelPath()+"/cleanData/data.txt";
-            double minSupport=0.003;
-            int numPartition=-1;
-
-
-
-            JavaRDD<List<String>> transactions = sc.textFile(inputFile)
-                    .map(s-> Arrays.asList(s.split(" ")))
-                    .map(x->{
-                        x.set(0,x.get(0)+"职位");
-                        return x;
-                    })
-                    .filter(s->s.size()>2);
-
-
-            FPTreemodel = new FPGrowth()
-                    .setMinSupport(minSupport)
-                    .run(transactions);
-            FPTreemodel.save(sc.sc(),"../data/"+logisticRegression.getModelPath()+"/mod/FPTreeModel");
-        }
-
-
-
-        ArrayList<Tuple3<String,String,Double>> list= new ArrayList<>();
-        AssociationRules arules = new AssociationRules()
-                .setMinConfidence(0.15);
-        JavaRDD<AssociationRules.Rule<String>> results = arules.run(FPTreemodel.freqItemsets().toJavaRDD());
-
-
-        List<AssociationRules.Rule<String>> result=results.collect();
-        sc.stop();
-        model=result;
-        return;
     }
 }
