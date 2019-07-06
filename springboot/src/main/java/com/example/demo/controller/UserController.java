@@ -2,10 +2,12 @@ package com.example.demo.controller;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.example.demo.SparkService.Analyzer;
+import com.example.demo.entity.MyMap;
 import com.example.demo.entity.Users_user;
 import com.example.demo.mapper.UserMapper;
 
 
+import org.apache.ibatis.annotations.Param;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -15,6 +17,7 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.io.*;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -180,7 +183,13 @@ public class UserController {
             return resp;
         }
         resp.put("status",true);
-        resp.put("jobs",Analyzer.getJobList().toArray());
+        ArrayList<String> list=Analyzer.getJobList();
+        for (int i = 0; i < list.size(); i++) {
+            if (list.get(i).contains("/"))
+                list.remove(i);
+
+        }
+        resp.put("jobs",list.toArray());
         resp.put("skills",Analyzer.getSkillList().toArray());
 
         return resp;
@@ -190,9 +199,10 @@ public class UserController {
 
     @ResponseBody
     @RequestMapping(value = "/choose")
-    public HashMap<String,Object> choose(HashMap<String,Object> hashMap,HttpServletRequest request)
+    public HashMap<String,Object> choose(MyMap myMap, HttpServletRequest request)
     {
-        HashMap<String,Object> resp = new HashMap<>();
+
+        HashMap<String,Object> resp=new HashMap<>();
         HttpSession session=request.getSession();
         Object object=session.getAttribute("email");
         String emaill=(String) object;
@@ -201,8 +211,18 @@ public class UserController {
             resp.put("status",false);
             return resp;
         }
+        ArrayList<String> skillList=myMap.getSkillList();
+        String s=skillList.get(0);
+        skillList.set(0,s.substring(1,s.length()));
+        s=skillList.get(skillList.size()-1);
+        skillList.set(skillList.size()-1,s.substring(0,s.length()-1));
+        for (int i = 0; i < skillList.size(); i++) {
+            String str=skillList.get(i);
+            skillList.set(i,str.substring(1,str.length()-1));
+        }
+        session.setAttribute("preferedJob",myMap.getPreferedJob());
+        session.setAttribute("skillList",skillList);
 
-        session.setAttribute("hashMap",hashMap);
         resp.put("status",true);
         return resp;
 
@@ -216,7 +236,7 @@ public class UserController {
         Object object=session.getAttribute("email");
         String emaill=(String) object;
         if (emaill==null)
-            return "error";
+            return "index.html";
         else
             return "recommend";
     }
@@ -231,14 +251,24 @@ public class UserController {
             return null;
         else
         {
-            object=session.getAttribute("hashMap");
-            HashMap<String,Object> hashMap=(HashMap<String,Object>) object;
-//            if (hashMap==null)
-//                return null;
-//            Analyzer analyzer = new Analyzer(hashMap);
-//            return analyzer.getResultHashMap();
+            HashMap<String,Object> hashMap=new HashMap<>();
+            HashMap<String,Object> resp=new HashMap<>();
+            Object object1=session.getAttribute("preferedJob");
+            Object object2=session.getAttribute("skillList");
+            if (object1==null||object2==null)
+            {
+                resp.put("status",false);
+                return resp;
+            }
+            hashMap.put("preferedJob",object1);
+            hashMap.put("skillList",object2);
+            session.removeAttribute("preferedJob");
+            session.removeAttribute("skillList");
 
-            return Analyzer.getTestResultHashMap();
+            Analyzer analyzer = new Analyzer(hashMap);
+            resp=analyzer.getResultHashMap();
+            resp.put("status",true);
+            return resp;
         }
 
     }

@@ -62,7 +62,7 @@ public class Analyzer implements Serializable {
     public static void init()
     {
         createModel();
-//        logisticRegression=new LogisticRegression();
+        logisticRegression=new LogisticRegression();
     }
 
     public Analyzer(ArrayList<String> skillList, String preferedJob)
@@ -76,10 +76,8 @@ public class Analyzer implements Serializable {
 
     public Analyzer(HashMap<String,Object> hashMap)
     {
-        String preferedJob=(String) (hashMap.get("preferedJob"));
-        String[] skillArray= (String[]) (hashMap.get("skillArray"));
-        this.skillList=arrayToStringArrayList(skillArray);
-        this.preferedJob=preferedJob;
+        this.skillList=(ArrayList<String>) (hashMap.get("skillList"));
+        this.preferedJob=(String) (hashMap.get("preferedJob"));
         createModel();
         if (logisticRegression==null)
             logisticRegression=new LogisticRegression();

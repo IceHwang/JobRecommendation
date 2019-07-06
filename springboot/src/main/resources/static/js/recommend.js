@@ -11,16 +11,27 @@ $(function () {
             async: true,
             type: "post",//增 //get 查 pot 更新 //delete
             data: {
-                "preferedJob":"",
-                "skillArray" :""
             },
             success: function (res) {
-                for (var i = 0; i < 3; i++) {
-                    jobs[i]=res.jobs[i];
-                    recommendSkills[i]=res.recommendSkills[i];
-                    coreSkills[i]=res.coreSkills[i];
+                if (res.status)
+                {
+                    for (var i = 0; i < 3; i++) {
+                        jobs[i]=res.jobs[i];
+                        recommendSkills[i]=res.recommendSkills[i];
+                        coreSkills[i]=res.coreSkills[i];
+                    }
+                    putUpResult();
                 }
-                putUpResult();
+                else
+                {
+                    for (var i = 0; i < 3; i++) {
+                        jobs[i]="请选择职业与技能";
+                        recommendSkills[i]="请选择职业与技能";
+                        coreSkills[i]="请选择职业与技能";
+                    }
+                    putUpResult();
+                }
+
 
             },
         }
