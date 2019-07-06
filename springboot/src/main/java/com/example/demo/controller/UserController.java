@@ -28,6 +28,8 @@ public class UserController {
 
     @Autowired
     private UserMapper userMapper;
+
+    @Autowired
     private historyMapper historyMapper;
     private final Users_user ERR_CREATE_USERS = null;
     private final String errmsg = "errmsg";
@@ -160,13 +162,9 @@ public class UserController {
             return resp;
         }
         resp.put("status",true);
-//        ArrayList<String> list=Analyzer.getJobList();
-//        resp.put("jobs",list.toArray());
-//        resp.put("skills",Analyzer.getSkillList().toArray());
-        String[] jobs={"android开发工程师职位", "c#开发工程师职位" ,"c/c++开发工程师职位"};
-        String[] skills={"android","sdk","activity","service"};
-        resp.put("jobs",jobs);
-        resp.put("skills",skills);
+        resp.put("jobs",Analyzer.getJobList());
+        resp.put("skills",Analyzer.getSkillList());
+
         return resp;
 
 
@@ -248,11 +246,19 @@ public class UserController {
             Users_user user=userMapper.selectOne(queryWrapper);
             int usrId=user.getId();
             String time=LocalDateTime.now().toString();
-            String info= new JSONObject(hashMap).toJSONString();
-
+            String info= new JSONObject(resp).toJSONString();
             history record=new history(usrId,time,info);
+            int num=0;
+            try {
 
-            if(historyMapper.insert(record)>0)
+                num=historyMapper.insert(record);
+
+            }catch (Exception e)
+            {
+                System.out.println(e.toString());
+            }
+
+            if(num>0)
             {
                 resp.put("status",true);
                 return resp;

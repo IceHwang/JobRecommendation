@@ -1,4 +1,4 @@
-//var time = 3;
+var time = 3;
 $(function () {
 
     $("#email, #pass, #pass-ag").focus(restore);
@@ -45,7 +45,8 @@ function checkPassAg() {
 
 function checkAll() {
     //console.log("123");
-    if ((!checkPass() && checkEmail() && checkPassAg())) {
+    if ((!checkPass() && checkEmail() && checkPassAg()))
+    {
         return false;
     }else {
         var email = $("#email").val();
