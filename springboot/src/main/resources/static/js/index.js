@@ -5,7 +5,6 @@ $(function () {
     $("#password").blur(checkPassword);
     $("#submit").click(checkAll);
 });
-let adminflag;
 function checkEmail() {
     let flag;
     let email = $("#email").val();
@@ -18,12 +17,7 @@ function checkEmail() {
         flag = false;
     }
     else {
-        if (email === "admin@123.com"){
-            adminflag = true;
-            flag = true;
-        }else
             flag =true;
-
     }
     return flag;
 }
@@ -62,7 +56,7 @@ function checkAll() {
                 if (res.status) {
                     //sessionStorage.user = JSON.stringify(res.data);
                     if(res.admin){
-                        window.location.href = "user/config";
+                        window.location.href = "user/adminhome";
 
                     } else
                         window.location.href = "user/userhome";

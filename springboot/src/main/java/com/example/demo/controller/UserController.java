@@ -18,10 +18,7 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.io.*;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Controller
 @RequestMapping("/user")
@@ -113,50 +110,6 @@ public class UserController {
 
 
 
-    @RequestMapping(value = "/config")
-    public String config(HttpServletRequest request){
-        HttpSession session=request.getSession();
-        Object object=session.getAttribute("admin");
-        String admin=(String) object;
-        if (admin==null)
-            return null;
-        else if(!admin.equals("1"))
-            return null;
-        else
-            return "config";
-    }
-
-    @ResponseBody
-    @RequestMapping(value = "/upload")
-    public HashMap<String,Object> upload(@RequestParam("file") MultipartFile inputFile,HttpServletRequest request) throws IOException {
-        HttpSession session=request.getSession();
-        Object object=session.getAttribute("admin");
-        String admin=(String) object;
-        if (admin==null)
-            return null;
-        else if(!admin.equals("1"))
-            return null;
-
-        HashMap<String,Object> resp = new HashMap<>();
-
-        if (inputFile==null||inputFile.getSize()==0)
-        {
-            resp.put("status",false);
-            return resp;
-        }
-
-        File outputFile = new File("../data/"+inputFile.getOriginalFilename());
-        inputFile.transferTo(outputFile);
-        // 读取文件第一行
-        BufferedReader bufferedReader = new BufferedReader(new FileReader(outputFile));
-        System.out.println(bufferedReader.readLine());
-        // 输出绝对路径
-        System.out.println(outputFile.getAbsolutePath());
-        bufferedReader.close();
-
-        resp.put("status",true);
-        return resp;
-    }
 
     @RequestMapping(value = "/get_history")
     @ResponseBody
@@ -291,5 +244,117 @@ public class UserController {
 
     }
 
+    @RequestMapping(value = "/logout")
+    public String logout(HttpServletRequest request){
+        HttpSession session=request.getSession();
+        session.invalidate();
+        return "redirect:/";
+    }
+
+    @RequestMapping(value = "/history")
+    public String history(HttpServletRequest request){
+        HttpSession session=request.getSession();
+        Object object=session.getAttribute("email");
+        String emaill=(String) object;
+        if (emaill==null)
+            return "index.html";
+        else
+            return "history";
+    }
+
+
+
+    @RequestMapping(value = "/adminhome")
+    public String config(HttpServletRequest request){
+        HttpSession session=request.getSession();
+        Object object=session.getAttribute("admin");
+        String admin=(String) object;
+        if (admin==null)
+            return null;
+        else if(!admin.equals("1"))
+            return null;
+        else
+            return "adminhome";
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "/upload")
+    public HashMap<String,Object> upload(@RequestParam("file") MultipartFile inputFile,HttpServletRequest request) throws IOException {
+        HttpSession session=request.getSession();
+        Object object=session.getAttribute("admin");
+        String admin=(String) object;
+        if (admin==null)
+            return null;
+        else if(!admin.equals("1"))
+            return null;
+
+        HashMap<String,Object> resp = new HashMap<>();
+
+        if (inputFile==null||inputFile.getSize()==0)
+        {
+            resp.put("status",false);
+            return resp;
+        }
+
+
+        Scanner input=new Scanner(inputFile.getInputStream());
+
+        ArrayList<String> inputStringList=new ArrayList<>();
+
+        while (input.hasNext())
+        {
+            inputStringList.add(input.nextLine());
+        }
+
+
+        input.close();
+
+        Analyzer.creatNewModel(inputStringList);
+
+        resp.put("status",true);
+        return resp;
+    }
+
+
+    @RequestMapping(value = "/get_modelList")
+    @ResponseBody
+    public HashMap<String,Object> get_modelList(HttpServletRequest request){
+        HttpSession session=request.getSession();
+        Object object=session.getAttribute("admin");
+        String admin=(String) object;
+        if (admin==null)
+            return null;
+        else if(!admin.equals("1"))
+            return null;
+
+        HashMap<String,Object> resp=new HashMap<>();
+        ArrayList<String> modelList=Analyzer.getModelPath();
+        String selectedModel=Analyzer.getSelectedModelPath();
+        resp.put("selectedModel",selectedModel);
+        resp.put("modelList",modelList);
+        resp.put("status",true);
+        return resp;
+
+
+    }
+
+    @RequestMapping(value = "/confirm_model")
+    @ResponseBody
+    public HashMap<String,Object> confirm_model(@RequestBody String model,HttpServletRequest request){
+        HttpSession session=request.getSession();
+        Object object=session.getAttribute("admin");
+        String admin=(String) object;
+        if (admin==null)
+            return null;
+        else if(!admin.equals("1"))
+            return null;
+        String modelName=model.substring(10,model.length());
+        HashMap<String,Object> resp=new HashMap<>();
+        Analyzer.saveSelectModelPath(modelName);
+        resp.put("status",true);
+        return resp;
+
+
+    }
 
 }

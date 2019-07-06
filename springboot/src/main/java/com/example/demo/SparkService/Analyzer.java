@@ -65,7 +65,7 @@ public class Analyzer implements Serializable {
         logisticRegression=new LogisticRegression();
     }
 
-    public ArrayList<String> getModelPath()
+    public static ArrayList<String> getModelPath()
     {
         return LogisticRegression.getModelConfig();
     }
@@ -358,6 +358,8 @@ public class Analyzer implements Serializable {
         FPGrowthModel FPTreemodel;
         if(model!=null)
             return;
+        if (logisticRegression==null)
+            logisticRegression=new LogisticRegression();
         try{
             FPTreemodel=FPGrowthModel.load(sc.sc(),"../data/"+logisticRegression.getModelPath()+"/mod/FPTreeModel");
 
