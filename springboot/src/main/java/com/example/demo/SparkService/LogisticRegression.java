@@ -36,12 +36,12 @@ public class LogisticRegression {
         SparkConf sparkConf = new SparkConf().setAppName("LogisticRegression").setMaster("local");
         JavaSparkContext sc = new JavaSparkContext(sparkConf);
         try{
-            this.model = LoadModel(sc,"../data/"+this.modelPath+"/mod");
+            this.model = LoadModel(sc,"../data/"+this.modelPath+"/mod/RegressionModel");
         }
         catch(Exception e){
             System.out.println(e.toString());
             this.model = trainLogisticRegressionModel(sc,path);
-            SaveModel(model,sc,"../data/"+this.modelPath+"/mod");
+            SaveModel(model,sc,"../data/"+this.modelPath+"/mod/RegressionModel");
         }
         sc.stop();
     }
@@ -57,6 +57,10 @@ public class LogisticRegression {
             f1.mkdirs();
             File f2 = new File("../data/"+this.modelPath+"/mod");
             f2.mkdirs();
+            File f4 = new File("../data/"+this.modelPath+"/mod/FPTreeModel");
+            f4.mkdirs();
+            File f5 = new File("../data/"+this.modelPath+"/mod/RegressionModel");
+            f5.mkdirs();
             File f3 = new File("../data/"+this.modelPath+"/VectorData");
             f3.mkdirs();
             try {

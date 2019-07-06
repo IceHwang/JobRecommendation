@@ -12,3 +12,6 @@ com
 max
 和调
 ishumei
+cd
+开发新
+天融信

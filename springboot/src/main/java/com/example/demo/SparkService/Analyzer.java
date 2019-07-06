@@ -352,28 +352,37 @@ public class Analyzer implements Serializable {
     public static void createModel()
     {
         System.setProperty("hadoop.home.dir","C:\\winutils");
-        if(model!=null)
-            return;
-        String inputFile = "../data/"+logisticRegression.getModelPath()+"/cleanData/data.txt";
-        double minSupport=0.003;
-        int numPartition=-1;
-
         SparkConf sparkConf= new SparkConf().setAppName("Analyzer");
         sparkConf.setMaster("local");
         JavaSparkContext sc = new JavaSparkContext(sparkConf);
+        FPGrowthModel FPTreemodel;
+        if(model!=null)
+            return;
+        try{
+            FPTreemodel=FPGrowthModel.load(sc.sc(),"../data/"+logisticRegression.getModelPath()+"/mod/FPTreeModel");
 
-        JavaRDD<List<String>> transactions = sc.textFile(inputFile)
-                .map(s-> Arrays.asList(s.split(" ")))
-                .map(x->{
-                    x.set(0,x.get(0)+"职位");
-                    return x;
-                })
-                .filter(s->s.size()>2);
+        }
+        catch (Exception e){
+            String inputFile = "../data/"+logisticRegression.getModelPath()+"/cleanData/data.txt";
+            double minSupport=0.003;
+            int numPartition=-1;
 
 
-        FPGrowthModel<String> FPTreemodel = new FPGrowth()
-                .setMinSupport(minSupport)
-                .run(transactions);
+
+            JavaRDD<List<String>> transactions = sc.textFile(inputFile)
+                    .map(s-> Arrays.asList(s.split(" ")))
+                    .map(x->{
+                        x.set(0,x.get(0)+"职位");
+                        return x;
+                    })
+                    .filter(s->s.size()>2);
+
+
+            FPTreemodel = new FPGrowth()
+                    .setMinSupport(minSupport)
+                    .run(transactions);
+            FPTreemodel.save(sc.sc(),"../data/"+logisticRegression.getModelPath()+"/mod/FPTreeModel");
+        }
 
 
 
