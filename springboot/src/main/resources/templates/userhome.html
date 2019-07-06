@@ -32,7 +32,7 @@
     <nav class="navbar navbar-expand-lg px-4 py-2 bg-white shadow"><a href="#"
                                                                       class="sidebar-toggler text-gray-500 mr-4 mr-lg-5 lead"><i
             class="fas fa-align-left"></i></a><a href="userhome"
-                                                 class="navbar-brand font-weight-bold text-uppercase text-base">JobRecommendation</a>
+                                                 class="navbar-brand font-weight-bold text-uppercase text-base">Job Recommendation</a>
         <ul class="ml-auto d-flex align-items-center list-unstyled mb-0">
         </ul>
     </nav>
@@ -43,13 +43,13 @@
         </div>
         <ul class="sidebar-menu list-unstyled">
             <li class="sidebar-list-item"><a href="userhome" class="sidebar-link text-muted active"><i
-                    class="o-home-1 mr-3 text-gray"></i><span>search</span></a></li>
+                    class="o-home-1 mr-3 text-gray"></i><span>主界面</span></a></li>
             <li class="sidebar-list-item"><a href="recommend" class="sidebar-link text-muted"><i
-                    class="o-home-1 mr-3 text-gray"></i><span>Recommendation</span></a></li>
+                    class="o-sales-up-1 mr-3 text-gray"></i><span>推荐结果</span></a></li>
             <li class="sidebar-list-item"><a href="history" class="sidebar-link text-muted "><i
-                    class="o-table-content-1 mr-3 text-gray"></i><span>History</span></a></li>
+                    class="o-table-content-1 mr-3 text-gray"></i><span>历史推荐</span></a></li>
             <li class="sidebar-list-item"><a href="/user/logout" class="sidebar-link text-muted"><i
-                    class="o-exit-1 mr-3 text-gray"></i><span>Log out </span></a></li>
+                    class="o-exit-1 mr-3 text-gray"></i><span>退出登录</span></a></li>
         </ul>
     </div>
     <div class="page-holder w-100 d-flex flex-wrap">
@@ -96,13 +96,17 @@
             </section>
 
         </div>
+        <div style="position: fixed;bottom: 40px;left: 60px">
+            <button onclick="choose()" type="submit" class="btn btn-primary">提交</button>
+        </div>
         <footer class="footer bg-white shadow align-self-end py-3 px-xl-5 w-100">
             <div class="container-fluid">
             </div>
         </footer>
     </div>
 </div>
-<button onclick="choose()">提交</button>
+
+
 <!-- JavaScript files-->
 <script src="/vendor/jquery/jquery.min.js"></script>
 <script src="/vendor/popper.js/umd/popper.min.js"></script>

@@ -20,6 +20,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.io.*;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 @Controller
@@ -123,6 +124,7 @@ public class UserController {
         QueryWrapper<history> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("user_id", user.getUser_id());
         List<history> historyreturn = historyMapper.selectList(queryWrapper);
+        Collections.sort(historyreturn,(a,b)->b.getTime().compareTo(a.getTime()));
         ArrayList<String> infoList=new ArrayList<>();
         ArrayList<String> timeList=new ArrayList<>();
         historyreturn.forEach(h->{
@@ -245,7 +247,9 @@ public class UserController {
             queryWrapper.eq("email",email);
             Users_user user=userMapper.selectOne(queryWrapper);
             int usrId=user.getId();
-            String time=LocalDateTime.now().toString();
+            LocalDateTime now=LocalDateTime.now();
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+            String time=now.format(formatter);
             String info= new JSONObject(resp).toJSONString();
             history record=new history(usrId,time,info);
             int num=0;
