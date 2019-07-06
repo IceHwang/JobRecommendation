@@ -3,7 +3,7 @@ $(function () {
     tableGenerater(null,null,null,null);
 
     $.ajax({
-            url: "/user/history",
+            url: "/user/get_history",
             dataType: "json",
             async: true,
             type: "post",//增 //get 查 pot 更新 //delete
@@ -18,6 +18,7 @@ $(function () {
                 for (var i = 0; i < res.times.length; i++) {
 
                     times.push(res.times[i]);
+
                     jobs.push(res.jobs[i]);
                     recommendSkills.push(res.recommendSkills[i]);
                     coreSkills.push(res.coreSkills[i]);

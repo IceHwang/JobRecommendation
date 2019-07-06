@@ -121,8 +121,15 @@ public class UserController {
         QueryWrapper<history> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("user_id", user.getUser_id());
         List<history> historyreturn = historyMapper.selectList(queryWrapper);
+        ArrayList<String> infoList=new ArrayList<>();
+        ArrayList<String> timeList=new ArrayList<>();
+        historyreturn.forEach(h->{
+            timeList.add(h.getTime());
+            infoList.add(h.getInfo());
+        });
         resp.put("status",true);
-        resp.put("data",historyreturn);
+        resp.put("infoList",infoList);
+        resp.put("timeList",timeList);
         return resp;
 
         
