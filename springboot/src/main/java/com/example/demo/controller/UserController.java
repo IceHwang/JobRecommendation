@@ -1,5 +1,6 @@
 package com.example.demo.controller;
 
+import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.example.demo.SparkService.Analyzer;
 import com.example.demo.entity.MyMap;
@@ -18,6 +19,7 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.io.*;
+import java.time.LocalDateTime;
 import java.util.*;
 
 @Controller
@@ -108,9 +110,6 @@ public class UserController {
         return resp;
     }
 
-
-
-
     @RequestMapping(value = "/get_history")
     @ResponseBody
      public HashMap<String,Object> get_history(HttpServletRequest request) {
@@ -122,6 +121,7 @@ public class UserController {
         QueryWrapper<history> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("user_id", user.getUser_id());
         List<history> historyreturn = historyMapper.selectList(queryWrapper);
+        resp.put("status",true);
         resp.put("data",historyreturn);
         return resp;
 
@@ -139,7 +139,6 @@ public class UserController {
             return "userhome";
     }
 
-
     @ResponseBody
     @RequestMapping(value = "/get_info")
     public HashMap<String,Object> get_info(HttpServletRequest request)
@@ -154,15 +153,13 @@ public class UserController {
             return resp;
         }
         resp.put("status",true);
-        ArrayList<String> list=Analyzer.getJobList();
-        for (int i = 0; i < list.size(); i++) {
-            if (list.get(i).contains("/"))
-                list.remove(i);
-
-        }
-        resp.put("jobs",list.toArray());
-        resp.put("skills",Analyzer.getSkillList().toArray());
-
+//        ArrayList<String> list=Analyzer.getJobList();
+//        resp.put("jobs",list.toArray());
+//        resp.put("skills",Analyzer.getSkillList().toArray());
+        String[] jobs={"android开发工程师职位", "c#开发工程师职位" ,"c/c++开发工程师职位"};
+        String[] skills={"android","sdk","activity","service"};
+        resp.put("jobs",jobs);
+        resp.put("skills",skills);
         return resp;
 
 
@@ -200,7 +197,6 @@ public class UserController {
 
     }
 
-
     @RequestMapping(value = "/recommend")
     public String recommend(HttpServletRequest request){
         HttpSession session=request.getSession();
@@ -217,8 +213,8 @@ public class UserController {
     public HashMap<String,Object> get_recommend(HttpServletRequest request){
         HttpSession session=request.getSession();
         Object object=session.getAttribute("email");
-        String emaill=(String) object;
-        if (emaill==null)
+        String email=(String) object;
+        if (email==null)
             return null;
         else
         {
@@ -236,10 +232,32 @@ public class UserController {
             session.removeAttribute("preferedJob");
             session.removeAttribute("skillList");
 
+
             Analyzer analyzer = new Analyzer(hashMap);
             resp=analyzer.getResultHashMap();
-            resp.put("status",true);
-            return resp;
+
+            QueryWrapper<Users_user> queryWrapper = new QueryWrapper<>();
+            queryWrapper.eq("email",email);
+            Users_user user=userMapper.selectOne(queryWrapper);
+            int usrId=user.getId();
+            String time=LocalDateTime.now().toString();
+            String info= new JSONObject(hashMap).toJSONString();
+
+            history record=new history(usrId,time,info);
+
+            if(historyMapper.insert(record)>0)
+            {
+                resp.put("status",true);
+                return resp;
+            }
+            else
+            {
+                System.out.println("assert!! history insertion error.");
+                resp.put("status",true);
+                return resp;
+            }
+
+
         }
 
     }
@@ -356,5 +374,7 @@ public class UserController {
 
 
     }
+
+
 
 }
