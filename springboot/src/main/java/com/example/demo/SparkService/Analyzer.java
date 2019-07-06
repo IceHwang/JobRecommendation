@@ -31,7 +31,7 @@ public class Analyzer implements Serializable {
 
 //        getSkillList().forEach(System.out::println);
 
-        saveSelectModelPath("2019_0705_2012");
+        saveSelectModelPath("2019_0705_1601");
         String[] skillArray={"tensorflow","ajax","docker","html","javascript","mysql","java","sql","c++","tomcat","spring","svm"};
         ArrayList<String> list = arrayToStringArrayList(skillArray);
 
