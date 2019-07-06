@@ -23,9 +23,9 @@ def main():
     filename = os.listdir(r'../data/others/ReptilianData')
     for i in range(len(filename)):
         totalList += transformTest(filename[i], job[i])
-    file = FileIO("../data/2019_0705_1601/cleanData/")
+    file = FileIO("../data/")
     file.saveJsonList("data.txt",totalList)
-    Word2Vector.word2Vec('../data/2019_0705_1601/VectorData/', totalList)
+    Word2Vector.word2Vec('../data/', totalList)
     return
 
 if __name__ == '__main__':

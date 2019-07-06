@@ -15,3 +15,6 @@ ishumei
 cd
 开发新
 天融信
+ipad
+server
+iphone
