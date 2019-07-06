@@ -5,7 +5,8 @@ import com.example.demo.SparkService.Analyzer;
 import com.example.demo.entity.MyMap;
 import com.example.demo.entity.Users_user;
 import com.example.demo.mapper.UserMapper;
-
+import com.example.demo.entity.history;
+import com.example.demo.mapper.historyMapper;
 
 import org.apache.ibatis.annotations.Param;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,12 +23,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-@Controller// return jason data
+@Controller
 @RequestMapping("/user")
 public class UserController {
 
     @Autowired
     private UserMapper userMapper;
+    private historyMapper historyMapper;
     private final Users_user ERR_CREATE_USERS = null;
     private final String errmsg = "errmsg";
 
@@ -65,7 +67,7 @@ public class UserController {
     @PostMapping(value = "/login")
     @ResponseBody
     public HashMap<String,Object> login(Users_user users_user, HttpServletRequest request){
-        System.out.println(users_user.getPassword());
+       // System.out.println(users_user.getPassword());
         HashMap<String,Object> resp = new HashMap<>();
         QueryWrapper<Users_user> testAdmin= new QueryWrapper<>();
         testAdmin.eq("email",users_user.getEmail()).eq("admin",1);
@@ -91,6 +93,8 @@ public class UserController {
                 HttpSession session=request.getSession();
                 session.setAttribute("email",users_user.getEmail());
                 session.setAttribute("password",users_user.getPassword());
+                session.setAttribute("id",users_user2.getId());
+                System.out.println(session.getAttribute("id"));
                 if (users_user.getAdmin() ==1)
                 {
                     session.setAttribute("admin","1");
@@ -122,7 +126,6 @@ public class UserController {
             return "config";
     }
 
-
     @ResponseBody
     @RequestMapping(value = "/upload")
     public HashMap<String,Object> upload(@RequestParam("file") MultipartFile inputFile,HttpServletRequest request) throws IOException {
@@ -153,9 +156,24 @@ public class UserController {
 
         resp.put("status",true);
         return resp;
-
-
     }
+
+    @RequestMapping(value = "/get_history")
+    @ResponseBody
+     public HashMap<String,Object> get_history(HttpServletRequest request) {
+        HashMap<String,Object> resp = new HashMap<>();
+        HttpSession session = request.getSession();
+        Object object = session.getAttribute("id");
+        int user_id = (int) object;
+        history user = new history(user_id);
+        QueryWrapper<history> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("user_id", user.getUser_id());
+        List<history> historyreturn = historyMapper.selectList(queryWrapper);
+        resp.put("data",historyreturn);
+        return resp;
+
+        
+   }
 
     @RequestMapping(value = "/userhome")
     public String userhome(HttpServletRequest request){

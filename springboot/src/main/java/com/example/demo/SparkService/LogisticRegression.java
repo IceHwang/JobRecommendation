@@ -14,31 +14,150 @@ import org.apache.spark.mllib.evaluation.MulticlassMetrics;
 import org.apache.spark.mllib.regression.LabeledPoint;
 import org.apache.spark.mllib.util.MLUtils;
 import java.io.*;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 public class LogisticRegression {
-    LogisticRegressionModel model;
+    public static void main(String[] args)
+    {
+        ArrayList<String> l = new ArrayList<>();
+        l.add("android开发工程师 android sdk ");
+        l.add("android开发工程师 android kotlin app c++ native java ");
+        LogisticRegression lr = new LogisticRegression(l);
+
+    }
+    private LogisticRegressionModel model;
+    private String modelPath = "";
     LogisticRegression()
     {
         System.setProperty("hadoop.home.dir","C:\\winutils");
-        String path = "../data/VectorData/vectorData.txt";
+        this.modelPath = getSelectedModel();
+        String path = "../data/"+this.modelPath+"/VectorData/vectorData.txt";
         SparkConf sparkConf = new SparkConf().setAppName("LogisticRegression").setMaster("local");
         JavaSparkContext sc = new JavaSparkContext(sparkConf);
         try{
-            this.model = LoadModel(sc,"../data/mod");
+            this.model = LoadModel(sc,"../data/"+this.modelPath+"/mod");
         }
         catch(Exception e){
             System.out.println(e.toString());
             this.model = trainLogisticRegressionModel(sc,path);
-            SaveModel(model,sc,"../data/mod");
+            SaveModel(model,sc,"../data/"+this.modelPath+"/mod");
         }
         sc.stop();
     }
+    LogisticRegression(ArrayList<String> newData)
+    {
+        System.setProperty("hadoop.home.dir","C:\\winutils");
+        SimpleDateFormat df = new SimpleDateFormat("yyyy_MMdd_HHmm");
+        this.modelPath = df.format(new Date());
+        File file = new File("../data/"+this.modelPath);
+        if(!file.exists()){
+            file.mkdirs();
+            File f1 = new File("../data/"+this.modelPath+"/cleanData");
+            f1.mkdirs();
+            File f2 = new File("../data/"+this.modelPath+"/mod");
+            f2.mkdirs();
+            File f3 = new File("../data/"+this.modelPath+"/VectorData");
+            f3.mkdirs();
+            try {
+                BufferedWriter out = new BufferedWriter(new FileWriter("../data/config.txt",true));
+                out.write(this.modelPath+"\n");
+                out.close();
+            }
+            catch (IOException e) {
+                System.out.println(e.toString());
+                }
+        }
+        this.saveVector(newData);
+        String path = "../data/"+this.modelPath+"/VectorData/vectorData.txt";
+        SparkConf sparkConf = new SparkConf().setAppName("LogisticRegression").setMaster("local");
+        JavaSparkContext sc = new JavaSparkContext(sparkConf);
+        try{
+            this.model = LoadModel(sc,"../data/"+this.modelPath+"/mod");
+        }
+        catch(Exception e){
+            System.out.println(e.toString());
+            this.model = trainLogisticRegressionModel(sc,path);
+            SaveModel(model,sc,"../data/"+this.modelPath+"/mod");
+        }
+        sc.stop();
+    }
+
+
+    public void saveVector(ArrayList<String> newData)
+    {
+        ArrayList<String> skills = new ArrayList<>();
+        String skill = "";
+        ArrayList<String> jobs = new ArrayList<>();
+        String job = "";
+        for(int i = 0;i<newData.size();i++)
+        {
+            String[] l = newData.get(i).split(" ");
+            if(!jobs.contains(l[0]))
+            {
+                jobs.add(l[0]);
+                job = job + l[0] + " ";
+            }
+            for(int j = 1;j<l.length;j++)
+            {
+                if(!skills.contains(l[j]))
+                {
+                    skills.add(l[j]);
+                    skill = skill + l[j] + " ";
+                }
+            }
+        }
+        try{
+            BufferedWriter out = new BufferedWriter(new FileWriter("../data/"+this.modelPath+"/cleanData/data.txt"));
+            for(int i = 0;i<newData.size();i++)
+            {
+                out.write(newData.get(i)+"\n");
+            }
+            out.close();
+        }
+        catch(IOException e){
+            System.out.println(e.toString());
+        }
+        try{
+            BufferedWriter in = new BufferedWriter(new FileWriter(new File("../data/"+this.modelPath+"/VectorData/skills.txt")));
+            in.write(skill);
+            in.close();
+            BufferedWriter ou = new BufferedWriter(new FileWriter(new File("../data/"+this.modelPath+"/VectorData/jobs.txt")));
+            ou.write(job);
+            ou.close();
+            BufferedWriter out = new BufferedWriter(new FileWriter(new File("../data/"+this.modelPath+"/VectorData/vectorData.txt")));
+            for(int i = 0;i<newData.size();i++)
+            {
+                String[] l = newData.get(i).split(" ");
+                if(l.length !=1&&l.length!=2)
+                {
+                    String k = jobs.indexOf(l[0]) + " ";
+                    for(int j = 0;j<skills.size();j++)
+                    {
+                        int m = 0;
+                        for(int p = 1;p<l.length;p++)
+                        {
+                            if(l[p].equals(skills.get(j)))
+                            {
+                                m = 1;
+                                break;
+                            }
+                        }
+                        k = k + (j+1) + ":"+m+" ";
+                    }
+                    out.write(k+"\n");
+                }
+            }
+            out.close();
+        }
+        catch(IOException e){
+            System.out.println(e);
+        }
+    }
     public ArrayList<Map.Entry<String,Double>> getPredictedJobWithScore(ArrayList<String> skillList)
     {
-        String jobs = "android开发工程师 c#开发工程师 c/c++开发工程师 数据库管理员 flash动画师 hadoop开发工程师 html5开发工程师 ios开发工程师 java开发工程师 php开发工程师 python开发工程师 u3d开发工程师 区块链工程师 图像处理算法工程师 嵌入式软件开发工程师 技术总监 技术经理 视觉算法工程师 架构师 测试工程师 深度学习算法工程师 网络安全工程师 网络工程师 自然语言处理工程师 运维工程师";
-        String[] job = jobs.split(" ");
-        ArrayList<Double> confidenceScore = (getConfidenceScore(this.model,word2Vec(skillList)));
+        String[] job = this.getJobs();
+        ArrayList<Double> confidenceScore = (getConfidenceScore(this.model,this.word2Vec(skillList)));
         HashMap<String,Double> jobWithScore = new HashMap<String,Double>();
         for(int i = 0;i<job.length;i++)
         {
@@ -47,6 +166,55 @@ public class LogisticRegression {
         ArrayList<Map.Entry<String,Double>> list= new ArrayList<>(jobWithScore.entrySet());
         Collections.sort(list,(a,b)->b.getValue().compareTo(a.getValue()));
         return list;
+    }
+
+    public static ArrayList<String> getModelConfig()
+    {
+        ArrayList<String> modelConfigs = new ArrayList<>();
+        try{
+            BufferedReader in = new BufferedReader(new FileReader("../data/config.txt"));
+            String line;
+            while ((line = in.readLine()) != null) {
+                modelConfigs.add(line);
+            }
+            in.close();
+        }
+        catch(IOException e){
+            System.out.println(e);
+        }
+        return modelConfigs;
+    }
+
+    public static String getSelectedModel()
+    {
+        String line = "";
+        try{
+            BufferedReader in = new BufferedReader(new FileReader("../data/SelectedModel.txt"));
+            line = in.readLine();
+            in.close();
+        }
+        catch(IOException e){
+            System.out.println(e);
+        }
+        return line;
+    }
+    public String getModelPath()
+    {
+        return this.modelPath;
+    }
+
+    public String[] getJobs()
+    {
+        String jobs = "";
+        try{
+            BufferedReader in = new BufferedReader(new FileReader("../data/"+this.modelPath+"/VectorData/jobs.txt"));
+            jobs = in.readLine();
+            in.close();
+        }
+        catch(IOException e) {
+            System.out.println(e.toString());
+        }
+        return jobs.split(" ");
     }
 
     private static LogisticRegressionModel trainLogisticRegressionModel(JavaSparkContext sc,String path)
@@ -77,11 +245,11 @@ public class LogisticRegression {
                 path);
     }
 
-    private static Vector word2Vec(ArrayList<String> words)
+    private Vector word2Vec(ArrayList<String> words)
     {
         String[] skills = {""};
         try {
-            BufferedReader in = new BufferedReader(new FileReader("../data/VectorData/skills.txt"));
+            BufferedReader in = new BufferedReader(new FileReader("../data/"+this.modelPath+"/VectorData/skills.txt"));
             skills = in.readLine().split(" ");
             in.close();
 
@@ -103,6 +271,7 @@ public class LogisticRegression {
         }
         return Vectors.dense(data);
     }
+
     private static ArrayList<Double> getConfidenceScore(
             final LogisticRegressionModel lrModel, final Vector vector) {
         Vector weights = lrModel.weights();
