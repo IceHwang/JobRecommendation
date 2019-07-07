@@ -45,7 +45,7 @@ function checkPassAg() {
 
 function checkAll() {
     //console.log("123");
-    if ((!checkPass() && checkEmail() && checkPassAg()))
+    if (!(checkPass() && checkEmail() && checkPassAg()))
     {
         return false;
     }else {

@@ -1,0 +1,7 @@
+模块解释:
+reptile是Python爬虫模块。
+DataPreProcess是Python数据处理模块。
+springboot是SpringBoot与Spark模块的整合。
+注意:
+Windows环境下需要将winutils文件夹放在C盘根目录下才能正常使用模型存取功能。
+运行环境迁移后可能会导致以前训练的模型出现校验错误，需要在管理员界面中重新生成。
